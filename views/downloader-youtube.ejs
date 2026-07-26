@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Downloader - Always Rizz</title>
+  
+  <link rel="icon" type="image/jpg" href="/logo.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f8fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: #0f172a;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 450px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 28px;
+      padding: 30px 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      position: relative;
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      color: #0f172a;
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .back-btn:hover {
+      background: #e2e8f0;
+      transform: scale(1.05);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+      margin-top: 8px;
+    }
+
+    .header .icon {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #FF0000;
+      border-radius: 16px;
+      margin: 0 auto 10px;
+      font-size: 2rem;
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+    }
+
+    .header .title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .header .subtitle {
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+
+    .quality-options {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .quality-btn {
+      padding: 8px 16px;
+      background: #f1f5f9;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #0f172a;
+    }
+
+    .quality-btn:hover {
+      background: #e2e8f0;
+      transform: translateY(-2px);
+    }
+
+    .quality-btn.active {
+      background: #FF0000;
+      border-color: #FF0000;
+      color: #ffffff;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .input-group input {
+      flex: 1;
+      padding: 14px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 14px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
+
+    .input-group input:focus {
+      border-color: #FF0000;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+    }
+
+    .input-group input::placeholder {
+      color: #94a3b8;
+    }
+
+    .btn-download {
+      padding: 14px 24px;
+      background: #FF0000;
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-download:hover {
+      background: #cc0000;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 0, 0, 0.3);
+    }
+
+    .btn-download:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .error-msg {
+      display: none;
+      margin-top: 8px;
+      padding: 10px 14px;
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      border-radius: 10px;
+      color: #dc2626;
+      font-size: 0.85rem;
+    }
+
+    .error-msg.show {
+      display: block;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .loading .spinner {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border: 3px solid #e2e8f0;
+      border-top-color: #FF0000;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading p {
+      margin-top: 8px;
+      color: #64748b;
+      font-size: 0.85rem;
+    }
+
+    .result-box {
+      display: none;
+      margin-top: 16px;
+      padding: 16px;
+      background: #f1f5f9;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .result-box.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .result-box .result-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .result-box .result-detail {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 12px;
+    }
+
+    .result-box .result-thumbnail {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #e2e8f0;
+      object-fit: cover;
+    }
+
+    .result-box .download-link {
+      display: inline-block;
+      padding: 10px 24px;
+      background: #22c55e;
+      color: #ffffff;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .result-box .download-link:hover {
+      background: #16a34a;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+    }
+
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.7rem;
+      color: #94a3b8;
+      padding-top: 16px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px 16px;
+        border-radius: 20px;
+      }
+      .input-group {
+        flex-direction: column;
+      }
+      .btn-download {
+        width: 100%;
+        justify-content: center;
+      }
+      .header .icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+      }
+      .header .title {
+        font-size: 1rem;
+      }
+      .back-btn {
+        top: 12px;
+        left: 12px;
+        width: 34px;
+        height: 34px;
+        font-size: 1rem;
+      }
+      .quality-options {
+        gap: 6px;
+      }
+      .quality-btn {
+        padding: 6px 12px;
+        font-size: 0.65rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <button class="back-btn" onclick="history.back()">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+
+    <div class="header">
+      <div class="icon"><i class="fa-brands fa-youtube"></i></div>
+      <div class="title">YouTube Downloader</div>
+      <div class="subtitle">MP3 &amp; MP4 Downloader</div>
+    </div>
+
+    <!-- Quality Options -->
+    <div class="quality-options" id="qualityOptions">
+      <button class="quality-btn active" data-quality="mp3">MP3</button>
+      <button class="quality-btn" data-quality="144p">144p</button>
+      <button class="quality-btn" data-quality="360p">360p</button>
+      <button class="quality-btn" data-quality="720p">720p</button>
+      <button class="quality-btn" data-quality="1080p">1080p</button>
+    </div>
+
+    <div class="input-group">
+      <input type="text" id="urlInput" placeholder="https://youtube.com/watch?v=...">
+      <button class="btn-download" id="downloadBtn">
+        <i class="fa-solid fa-download"></i> Download
+      </button>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>Sedang memproses...</p>
+    </div>
+
+    <div class="result-box" id="resultBox">
+      <div class="result-title" id="resultTitle">✅ Siap Download</div>
+      <div class="result-detail" id="resultDetail">Klik tombol di bawah untuk download</div>
+      <img class="result-thumbnail" id="resultThumbnail" style="display:none;">
+      <a href="#" class="download-link" id="downloadLink" target="_blank">
+        <i class="fa-solid fa-download"></i> Download
+      </a>
+    </div>
+
+    <div class="footer">
+      © 2026 • Always Riz Official
+    </div>
+  </div>
+
+  <script>
+    const urlInput = document.getElementById('urlInput');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const resultBox = document.getElementById('resultBox');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultDetail = document.getElementById('resultDetail');
+    const resultThumbnail = document.getElementById('resultThumbnail');
+    const downloadLink = document.getElementById('downloadLink');
+    const errorMsg = document.getElementById('errorMsg');
+    const loading = document.getElementById('loading');
+    const qualityBtns = document.querySelectorAll('.quality-btn');
+
+    const API_KEY = 'FreeByFhkry';
+    let selectedQuality = 'mp3';
+
+    // Quality select
+    qualityBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        qualityBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        selectedQuality = this.dataset.quality;
+      });
+    });
+
+    async function handleDownload() {
+      const url = urlInput.value.trim();
+      
+      if (!url) {
+        showError('Masukkan URL YouTube terlebih dahulu!');
+        return;
+      }
+
+      downloadBtn.disabled = true;
+      loading.classList.add('show');
+      resultBox.classList.remove('active');
+      errorMsg.classList.remove('show');
+
+      try {
+        const type = selectedQuality === 'mp3' ? 'mp3' : 'mp4';
+        const response = await fetch(`/api/download/youtube?apikey=${API_KEY}&url=${encodeURIComponent(url)}&type=${type}&quality=${selectedQuality}`);
+        const data = await response.json();
+
+        loading.classList.remove('show');
+        downloadBtn.disabled = false;
+
+        if (!data.status) {
+          throw new Error(data.error || 'Gagal mendapatkan link download');
+        }
+
+        resultTitle.textContent = `🎬 ${data.result.title || 'YouTube Video'}`;
+        resultDetail.textContent = `Kualitas: ${data.result.quality || 'MP3'} • Format: ${data.result.type || 'audio'}`;
+        
+        if (data.result.image) {
+          resultThumbnail.src = data.result.image;
+          resultThumbnail.style.display = 'block';
+        } else {
+          resultThumbnail.style.display = 'none';
+        }
+        
+        downloadLink.href = data.result.download || '#';
+        downloadLink.textContent = '⬇️ Download';
+        resultBox.classList.add('active');
+
+      } catch (error) {
+        loading.classList.remove('show');
+        downloadBtn.disabled = false;
+        showError(error.message || 'Terjadi kesalahan, coba lagi');
+      }
+    }
+
+    function showError(msg) {
+      errorMsg.textContent = '❌ ' + msg;
+      errorMsg.classList.add('show');
+    }
+
+    downloadBtn.addEventListener('click', handleDownload);
+    
+    urlInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        handleDownload();
+      }
+    });
+  </script>
+
+</body>
+</html>
