@@ -259,10 +259,9 @@ app.get('/api/download/youtube', async (req, res) => {
 });
 
 // --- API TIKTOK (Menggunakan tiktokDl) ---
+// --- API TIKTOK ---
 app.get('/api/download/tiktok', async (req, res) => {
     const { apikey, url } = req.query;
-
-    console.log('📤 TikTok Request:', { apikey, url });
 
     if (apikey !== 'FreeByFhkry') {
         return res.json({ status: false, error: "Apikey invalid" });
@@ -273,10 +272,9 @@ app.get('/api/download/tiktok', async (req, res) => {
 
     try {
         const result = await tiktokDl(url);
-        console.log('✅ TikTok Success:', result.status);
         res.json(result);
     } catch (error) {
-        console.error("❌ TikTok API Error:", error.message);
+        console.error("TikTok API Error:", error.message);
         res.json({
             status: false,
             error: error.message || "Gagal mengambil data TikTok"
