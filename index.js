@@ -1,5 +1,8 @@
 const express = require('express');
 const path = require('path');
+const axios = require('axios');
+const cheerio = require('cheerio');
+const vm = require('vm');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,6 +13,8 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // ===== BIO DATA =====
 const bioData = {
@@ -58,6 +63,11 @@ const bioData = {
       title: 'All Products by Always Rizz',
       icon: 'fa-solid fa-box',
       url: '/products'
+    },
+    {
+      title: 'Downloader',
+      icon: 'fa-solid fa-download',
+      url: '/downloader'
     }
   ],
   footer: '© 2026 • Always Riz Official'
@@ -155,27 +165,266 @@ const productsData = {
   ]
 };
 
-// ===== ROUTES =====
+// ============================================================
+// 2. HELPER FUNCTIONS (SCRAPERS)
+// ============================================================
+
+// --- SCRAPER YOUTUBE ---
+async function youtubeV2(url, format) {
+    const yt = { title: null, image: null, format, download: null };
+
+    const options = {
+        method: 'GET',
+        headers: {
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 15; 23124RA7EO Build/AQ3A.240829.003) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.7444.174 Mobile Safari/537.36',
+            'Accept-Encoding': 'gzip, deflate, br, zstd',
+            'referer': 'https://ytmp3.so/',
+            'accept-language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7'
+        }
+    };
+
+    // STEP 1: INIT
+    let init = await fetch(
+        `https://p.savenow.to/ajax/download.php?copyright=0&format=${format}&url=${encodeURIComponent(url)}&api=dfcb6d76f2f6a9894gjkege8a4ab23222`,
+        options
+    ).then(r => r.json());
+
+    if (!init || !init.id) {
+        throw new Error("Gagal inisialisasi. Kualitas mungkin tidak tersedia.");
+    }
+
+    const id = init.id;
+    yt.title = init.info?.title || "YouTube Video";
+    yt.image = init.info?.image || "";
+
+    let prog = await fetch(`https://p.savenow.to/api/progress?id=${id}`, options).then(r => r.json());
+
+    let attempt = 0;
+    while (prog.success === 0) {
+        if (attempt > 30) break; 
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        prog = await fetch(`https://p.savenow.to/api/progress?id=${id}`, options).then(r => r.json());
+        if (prog.success === 1) break;
+        attempt++;
+    }
+
+    yt.download = prog.download_url || null;
+    return yt;
+}
+
+// --- SCRAPER INSTAGRAM ---
+async function savegram(url) {
+    if (!url) throw new Error('Url required');
+    const payload = new URLSearchParams({ url, action: 'post', lang: 'id' });
+    const { data } = await axios.post('https://savegram.info/action.php', payload.toString(), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'User-Agent': 'Mozilla/5.0', 'Referer': 'https://savegram.info/id' }
+    });
+    if (typeof data !== 'string') throw new Error('Script error');
+    
+    let capturedHtml = '';
+    const context = {
+        window: { location: { hostname: 'savegram.info' } },
+        pushAlert: () => {},
+        gtag: () => {},
+        document: { 
+            getElementById: (id) => { 
+                if (id === 'div_download') { 
+                    return { 
+                        set innerHTML(html) { 
+                            capturedHtml = html; 
+                        } 
+                    }; 
+                } 
+                return { style: {}, remove: () => {} }; 
+            }, 
+            querySelector: () => ({ classList: { remove: () => {} } }) 
+        },
+    };
+    vm.createContext(context); 
+    new vm.Script(data).runInContext(context);
+    if (!capturedHtml) throw new Error('Html empty');
+    
+    const $ = cheerio.load(capturedHtml);
+    const out = [];
+    $('.download-items').each((_, el) => {
+        const item = $(el);
+        const thumbnail = item.find('img').attr('src');
+        const btn = item.find('.download-items__btn a');
+        if (btn.attr('href')) {
+            out.push({ 
+                thumbnail, 
+                kualitas: btn.text().trim() || 'HD', 
+                url_download: btn.attr('href') 
+            });
+        }
+    });
+    if (!out.length) throw new Error('Media not found');
+    return out;
+}
+
+// ============================================================
+// 3. ROUTES
+// ============================================================
+
 // Halaman utama
 app.get('/', (req, res) => {
-  res.render('index', { bio: bioData });
+    res.render('index', { bio: bioData });
 });
 
 // Halaman products
 app.get('/products', (req, res) => {
-  res.render('products', { products: productsData.products });
+    res.render('products', { products: productsData.products });
 });
 
-// Halaman detail product (default ke product pertama)
+// Halaman detail product
 app.get('/product/:id?', (req, res) => {
-  const id = parseInt(req.params.id) || 1;
-  const product = productsData.products.find(p => p.id === id) || productsData.products[0];
-  res.render('product-detail', { product });
+    const id = parseInt(req.params.id) || 1;
+    const product = productsData.products.find(p => p.id === id) || productsData.products[0];
+    res.render('product-detail', { product });
+});
+
+// Halaman downloader
+app.get('/downloader', (req, res) => {
+    res.render('downloader');
+});
+
+// ============================================================
+// 4. API ENDPOINTS
+// ============================================================
+
+// --- API YOUTUBE ---
+app.get('/api/download/youtube', async (req, res) => {
+    const { apikey, url, type, quality } = req.query;
+
+    if (apikey !== 'FreeByFhkry') {
+        return res.json({ status: false, error: "Apikey invalid" });
+    }
+    if (!url) {
+        return res.json({ status: false, error: "Url is required" });
+    }
+
+    try {
+        let targetFormat = "mp3"; 
+        if (type === 'mp4') {
+            if (!quality) {
+                return res.json({ status: false, error: "Quality parameter is required for MP4!" });
+            }
+            targetFormat = quality;
+        }
+
+        const result = await youtubeV2(url, targetFormat);
+
+        if (result.download) {
+            res.json({
+                status: true,
+                creator: "Fhkryy",
+                result: {
+                    type: type,
+                    quality: targetFormat,
+                    title: result.title,
+                    image: result.image,
+                    download: result.download 
+                }
+            });
+        } else {
+            throw new Error("Gagal generate link. Resolusi mungkin tidak tersedia.");
+        }
+    } catch (error) {
+        console.error("YouTube Error:", error.message);
+        res.status(500).json({ status: false, error: error.message });
+    }
+});
+
+// --- API TIKTOK ---
+app.get('/api/download/tiktok', async (req, res) => {
+    const { apikey, url } = req.query;
+    
+    if (apikey !== 'FreeByFhkry') {
+        return res.json({ status: false, error: "Apikey invalid" });
+    }
+    if (!url) {
+        return res.json({ status: false, error: "Url missing" });
+    }
+
+    try {
+        const response = await axios.post('https://www.tikwm.com/api/', 
+            new URLSearchParams({ url: url, count: 12, cursor: 0, web: 1, hd: 1 })
+        );
+        const data = response.data.data;
+        if (!data) throw new Error("Video not found");
+        
+        res.json({
+            status: true,
+            result: {
+                author: data.author.nickname,
+                username: data.author.unique_id,
+                caption: data.title,
+                video: data.play,
+                cover: data.cover,
+                audio: data.music,
+                images: data.images
+            }
+        });
+    } catch (error) {
+        console.error("TikTok Error:", error.message);
+        res.json({ status: false, error: "Gagal mengambil data TikTok" });
+    }
+});
+
+// --- API INSTAGRAM ---
+app.get('/api/download/instagram', async (req, res) => {
+    const { apikey, url } = req.query;
+    
+    if (apikey !== 'FreeByFhkry') {
+        return res.json({ status: false, error: "Apikey invalid" });
+    }
+    if (!url) {
+        return res.json({ status: false, error: "Url missing" });
+    }
+
+    try {
+        const result = await savegram(url);
+        const baseUrl = `${req.protocol}://${req.get('host')}`;
+        const resultFinal = result.map(item => ({
+            thumbnail: item.thumbnail,
+            url_download: `${baseUrl}/stream?url=${encodeURIComponent(item.url_download)}&ext=${item.url_download.includes('.mp4')?'mp4':'jpg'}`
+        }));
+        res.status(200).json({ status: true, result: resultFinal });
+    } catch (error) {
+        console.error("Instagram Error:", error.message);
+        res.status(500).json({ status: false, error: error.message });
+    }
+});
+
+// --- STREAM PROXY ---
+app.get('/stream', async (req, res) => {
+    const { url, ext } = req.query;
+    if (!url) return res.status(400).send('Missing url');
+    
+    try {
+        const response = await axios({
+            method: 'GET',
+            url: decodeURIComponent(url),
+            responseType: 'stream',
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'Referer': 'https://savegram.info/'
+            }
+        });
+        
+        res.setHeader('Content-Disposition', `attachment; filename="download.${ext || 'mp4'}"`);
+        res.setHeader('Content-Type', response.headers['content-type'] || 'application/octet-stream');
+        response.data.pipe(res);
+    } catch (error) {
+        console.error('Stream error:', error.message);
+        res.status(500).send('Error downloading file');
+    }
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
-  console.log(`📱 Bio Link: http://localhost:${PORT}/`);
-  console.log(`📦 Products: http://localhost:${PORT}/products`);
+    console.log(`✅ Server running on http://localhost:${PORT}`);
+    console.log(`📱 Bio Link: http://localhost:${PORT}/`);
+    console.log(`📦 Products: http://localhost:${PORT}/products`);
+    console.log(`⬇️ Downloader: http://localhost:${PORT}/downloader`);
 });
