@@ -439,9 +439,10 @@
 
     // ===== FUNGSI FORMAT ANGKA =====
     function formatNumber(num) {
+      if (!num) return '0';
       if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
       if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-      return num;
+      return num.toString();
     }
 
     // ===== FUNGSI SHOW ERROR =====
@@ -503,12 +504,14 @@
         // ===== TAMPILKAN HASIL =====
         const result = data.result;
 
-        // Title
-        resultTitle.textContent = `🎵 ${result.author || 'TikTok Video'}`;
+        // Title - Author
+        const authorName = result.author || result.unique_id || 'Unknown';
+        resultTitle.textContent = `🎵 ${authorName}`;
 
-        // Detail
-        const caption = result.caption || '';
-        resultDetail.textContent = `@${result.username || 'user'} • ${caption.substring(0, 100)}${caption.length > 100 ? '...' : ''}`;
+        // Detail - Username + Caption
+        const username = result.unique_id || 'user';
+        const caption = result.title || '';
+        resultDetail.textContent = `@${username} • ${caption.substring(0, 100)}${caption.length > 100 ? '...' : ''}`;
 
         // Stats
         let statsHtml = '';
