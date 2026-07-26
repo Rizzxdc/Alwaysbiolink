@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const axios = require('axios');
 
-// Import scraper dari folder scrape
+// ✅ Cara import yang benar - panggil dari folder scrape
 const { youtubeV2 } = require('./scrape/youtube');
 const { tiktokDownload } = require('./scrape/tiktok');
 const { instagramDownload } = require('./scrape/instagram');
@@ -212,7 +212,7 @@ app.get('/downloader/spotify', (req, res) => {
 });
 
 // ============================================================
-// 4. API ENDPOINTS (Menggunakan Scraper dari folder scrape)
+// 4. API ENDPOINTS
 // ============================================================
 
 // --- API YOUTUBE ---
@@ -258,9 +258,11 @@ app.get('/api/download/youtube', async (req, res) => {
     }
 });
 
-// --- API TIKTOK (Menggunakan scraper tiktok) ---
+// --- API TIKTOK ---
 app.get('/api/download/tiktok', async (req, res) => {
     const { apikey, url } = req.query;
+
+    console.log('TikTok Request:', { apikey, url }); // Debug
 
     if (apikey !== 'FreeByFhkry') {
         return res.json({ status: false, error: "Apikey invalid" });
@@ -270,7 +272,9 @@ app.get('/api/download/tiktok', async (req, res) => {
     }
 
     try {
+        console.log('Calling tiktokDownload...'); // Debug
         const result = await tiktokDownload(url);
+        console.log('TikTok Result:', result.status); // Debug
         res.json(result);
     } catch (error) {
         console.error("TikTok API Error:", error.message);
@@ -281,7 +285,7 @@ app.get('/api/download/tiktok', async (req, res) => {
     }
 });
 
-// --- API INSTAGRAM (Menggunakan scraper instagram) ---
+// --- API INSTAGRAM ---
 app.get('/api/download/instagram', async (req, res) => {
     const { apikey, url } = req.query;
 
