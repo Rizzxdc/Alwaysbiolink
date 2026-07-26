@@ -165,7 +165,7 @@ const productsData = {
 };
 
 // ============================================================
-// 2. HELPER FUNCTIONS (SCRAPERS) - TANPA VM
+// 2. HELPER FUNCTIONS (SCRAPERS)
 // ============================================================
 
 // --- SCRAPER YOUTUBE ---
@@ -234,26 +234,43 @@ async function savegram(url) {
 // 3. ROUTES
 // ============================================================
 
-// Halaman utama
+// --- Halaman Utama ---
 app.get('/', (req, res) => {
     res.render('index', { bio: bioData });
 });
 
-// Halaman products
+// --- Halaman Products ---
 app.get('/products', (req, res) => {
     res.render('products', { products: productsData.products });
 });
 
-// Halaman detail product
+// --- Halaman Detail Product ---
 app.get('/product/:id?', (req, res) => {
     const id = parseInt(req.params.id) || 1;
     const product = productsData.products.find(p => p.id === id) || productsData.products[0];
     res.render('product-detail', { product });
 });
 
-// Halaman downloader
+// --- Halaman Downloader ---
 app.get('/downloader', (req, res) => {
     res.render('downloader');
+});
+
+// --- Halaman Downloader per Platform ---
+app.get('/downloader/instagram', (req, res) => {
+    res.render('downloader-instagram');
+});
+
+app.get('/downloader/tiktok', (req, res) => {
+    res.render('downloader-tiktok');
+});
+
+app.get('/downloader/youtube', (req, res) => {
+    res.render('downloader-youtube');
+});
+
+app.get('/downloader/spotify', (req, res) => {
+    res.render('downloader-spotify');
 });
 
 // ============================================================
@@ -391,10 +408,16 @@ app.get('/stream', async (req, res) => {
     }
 });
 
-// Start server
+// ============================================================
+// 5. START SERVER
+// ============================================================
 app.listen(PORT, () => {
     console.log(`✅ Server running on http://localhost:${PORT}`);
     console.log(`📱 Bio Link: http://localhost:${PORT}/`);
     console.log(`📦 Products: http://localhost:${PORT}/products`);
     console.log(`⬇️ Downloader: http://localhost:${PORT}/downloader`);
+    console.log(`📸 Instagram: http://localhost:${PORT}/downloader/instagram`);
+    console.log(`🎵 TikTok: http://localhost:${PORT}/downloader/tiktok`);
+    console.log(`▶️ YouTube: http://localhost:${PORT}/downloader/youtube`);
+    console.log(`🎧 Spotify: http://localhost:${PORT}/downloader/spotify`);
 });
