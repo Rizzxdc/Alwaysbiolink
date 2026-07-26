@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= product.name %> - Always Rizz</title>
+  
+  <link rel="icon" type="image/jpg" href="/logo.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f8fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: #0f172a;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 28px;
+      padding: 40px 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      text-align: center;
+      position: relative;
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      color: #0f172a;
+      text-decoration: none;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: #e2e8f0;
+      transform: scale(1.05);
+    }
+
+    .detail-icon {
+      font-size: 3rem;
+      margin-bottom: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .detail-name {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .detail-desc {
+      font-size: 0.95rem;
+      color: #64748b;
+      line-height: 1.6;
+      margin-bottom: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .detail-price {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #6366f1;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+    }
+
+    /* ===== CONTACT OWNER (WA & TELEGRAM) ===== */
+    .contact-section {
+      display: none;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 12px;
+      animation: fadeInContact 0.3s ease;
+    }
+
+    .contact-section.active {
+      display: flex;
+    }
+
+    @keyframes fadeInContact {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .contact-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: none;
+      cursor: pointer;
+      min-width: 130px;
+    }
+
+    .contact-btn i {
+      font-size: 1.2rem;
+    }
+
+    .contact-btn.whatsapp {
+      background: #25D366;
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+    }
+
+    .contact-btn.whatsapp:hover {
+      background: #1da851;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+    }
+
+    .contact-btn.telegram {
+      background: #0088cc;
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+    }
+
+    .contact-btn.telegram:hover {
+      background: #006699;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);
+    }
+
+    .contact-btn:active {
+      transform: scale(0.95);
+    }
+
+    .detail-btn {
+      display: inline-block;
+      padding: 12px 32px;
+      background: #6366f1;
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      width: 100%;
+    }
+
+    .detail-btn:hover {
+      background: #4f46e5;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+    }
+
+    /* ===== SUB BUTTONS ===== */
+    .sub-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .sub-btn {
+      padding: 10px 6px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #0f172a;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .sub-btn:hover {
+      background: #6366f1;
+      border-color: #6366f1;
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+    }
+
+    .sub-btn:active {
+      transform: scale(0.95);
+    }
+
+    .sub-btn.active {
+      background: #6366f1;
+      border-color: #6366f1;
+      color: #ffffff;
+    }
+
+    .sub-btn .sub-icon {
+      display: block;
+      font-size: 1.2rem;
+      margin-bottom: 2px;
+    }
+
+    .sub-btn .sub-label {
+      font-size: 0.6rem;
+      font-weight: 500;
+    }
+
+    .footer {
+      margin-top: 28px;
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 32px 16px;
+        border-radius: 20px;
+      }
+      .sub-buttons {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+      }
+      .sub-btn {
+        padding: 8px 4px;
+        font-size: 0.65rem;
+      }
+      .sub-btn .sub-icon {
+        font-size: 1rem;
+      }
+      .contact-btn {
+        padding: 10px 14px;
+        font-size: 0.8rem;
+        min-width: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <a href="/products" class="back-btn">
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
+
+    <div class="detail-icon" id="detailIcon"><%= product.icon %></div>
+    <div class="detail-name" id="detailName"><%= product.name %></div>
+    <div class="detail-desc" id="detailDesc"><%= product.desc %></div>
+    <div class="detail-price" id="detailPrice"><%= product.price %></div>
+
+    <!-- ===== CONTACT OWNER (WA & TELEGRAM) ===== -->
+    <div class="contact-section" id="contactSection">
+      <a href="https://wa.me/6282113877157" class="contact-btn whatsapp" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+        WhatsApp
+      </a>
+      <a href="https://t.me/AlwaysRizz" class="contact-btn telegram" target="_blank">
+        <i class="fa-brands fa-telegram-plane"></i>
+        Telegram
+      </a>
+    </div>
+
+    <button class="detail-btn" id="detailBtn">Beli Sekarang</button>
+
+    <!-- ===== 11 SUB BUTTONS ===== -->
+    <div class="sub-buttons" id="subButtons">
+      <% product.subButtons.forEach((sub, index) => { %>
+        <button class="sub-btn <%= index === 0 ? 'active' : '' %>" data-index="<%= index %>">
+          <span class="sub-icon"><%= sub.icon %></span>
+          <span class="sub-label"><%= sub.label %></span>
+        </button>
+      <% }) %>
+    </div>
+
+    <div class="footer">
+      © 2026 • Always Riz Official
+    </div>
+  </div>
+
+  <script>
+    // ===== DATA SUB BUTTONS DARI SERVER =====
+    const subData = <%- JSON.stringify(product.subButtons) %>;
+
+    const detailIcon = document.getElementById('detailIcon');
+    const detailName = document.getElementById('detailName');
+    const detailDesc = document.getElementById('detailDesc');
+    const detailPrice = document.getElementById('detailPrice');
+    const detailBtn = document.getElementById('detailBtn');
+    const contactSection = document.getElementById('contactSection');
+    const subButtons = document.querySelectorAll('.sub-btn');
+
+    let currentSub = subData[0];
+
+    function updateMainProduct(sub) {
+      currentSub = sub;
+      detailIcon.textContent = sub.icon;
+      detailName.textContent = sub.name;
+      detailDesc.textContent = sub.desc;
+      detailPrice.textContent = sub.price;
+      
+      // Sembunyikan kontak saat ganti sub
+      contactSection.classList.remove('active');
+      detailBtn.textContent = 'Beli Sekarang';
+      
+      // Animasi price
+      detailPrice.style.transition = 'all 0.3s ease';
+      detailPrice.style.transform = 'scale(1.1)';
+      setTimeout(() => { detailPrice.style.transform = 'scale(1)'; }, 300);
+    }
+
+    // ===== TOMBOL BELI =====
+    detailBtn.addEventListener('click', function() {
+      if (contactSection.classList.contains('active')) {
+        contactSection.classList.remove('active');
+        this.textContent = 'Beli Sekarang';
+      } else {
+        contactSection.classList.add('active');
+        this.textContent = 'Tutup Kontak';
+      }
+    });
+
+    // ===== KLIK SUB BUTTON =====
+    subButtons.forEach((btn) => {
+      btn.addEventListener('click', function() {
+        // Remove active dari semua
+        subButtons.forEach(b => b.classList.remove('active'));
+        // Add active ke yang diklik
+        this.classList.add('active');
+        
+        const index = parseInt(this.dataset.index);
+        updateMainProduct(subData[index]);
+      });
+    });
+
+    // ===== OTOMATIS TAMPILKAN SUB PERTAMA =====
+    window.addEventListener('load', function() {
+      if (subData.length > 0) {
+        updateMainProduct(subData[0]);
+      }
+    });
+
+    console.log('✦ Product Detail - 11 Sub buttons dengan Contact Owner!');
+  </script>
+
+</body>
+</html>

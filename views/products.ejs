@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Products - Always Rizz</title>
+  
+  <link rel="icon" type="image/jpg" href="/logo.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f8fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: #0f172a;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 28px;
+      padding: 40px 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      text-align: center;
+      position: relative;
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      color: #0f172a;
+      text-decoration: none;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: #e2e8f0;
+      transform: scale(1.05);
+    }
+
+    .page-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-top: 8px;
+      margin-bottom: 24px;
+      color: #0f172a;
+    }
+
+    .page-title i {
+      color: #6366f1;
+      margin-right: 8px;
+    }
+
+    .product-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .product-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      color: #0f172a;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+      width: 100%;
+      text-align: left;
+      font-size: 1rem;
+    }
+
+    .product-item:hover {
+      background: #e2e8f0;
+      border-color: #6366f1;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px -5px rgba(99, 102, 241, 0.15);
+    }
+
+    .product-item .product-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      color: #6366f1;
+      flex-shrink: 0;
+    }
+
+    .product-item .product-info {
+      flex: 1;
+      text-align: left;
+    }
+
+    .product-item .product-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .product-item .product-desc {
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    .product-item .product-arrow {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+    }
+
+    .product-item:hover .product-arrow {
+      color: #0f172a;
+      transform: translateX(4px);
+    }
+
+    .footer {
+      margin-top: 28px;
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 32px 16px;
+        border-radius: 20px;
+      }
+      .product-item {
+        padding: 12px 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <a href="/" class="back-btn">
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
+
+    <div class="page-title">
+      <i class="fa-solid fa-box"></i> All Products
+    </div>
+
+    <div class="product-grid">
+      <% products.forEach(product => { %>
+        <a href="/product/<%= product.id %>" class="product-item">
+          <div class="product-icon"><%= product.icon %></div>
+          <div class="product-info">
+            <div class="product-name"><%= product.name %></div>
+            <div class="product-desc"><%= product.desc.substring(0, 30) %>...</div>
+          </div>
+          <i class="fa-solid fa-chevron-right product-arrow"></i>
+        </a>
+      <% }) %>
+    </div>
+
+    <div class="footer">
+      © 2026 • Always Riz Official
+    </div>
+  </div>
+
+</body>
+</html>

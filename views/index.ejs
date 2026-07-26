@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= bio.name %> - Bio Link</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpg" href="/logo.jpg">
+  
+  <!-- Font Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+  
+  <!-- Icon FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: #0f172a;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ===== LOADING OVERLAY ===== */
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #1d1d1d;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5rem;
+      z-index: 9999;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    .loader-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .wave-container {
+      display: flex;
+      align-items: flex-end;
+      height: 60px;
+    }
+
+    .wave-bar {
+      width: 6px;
+      height: 20px;
+      margin: 0 4px;
+      background: linear-gradient(180deg, #a8ff78, #78ffd6);
+      border-radius: 3px;
+      animation: wave 1s ease-in-out infinite;
+      box-shadow: 0 0 6px #78ffd6, 0 0 12px #a8ff78;
+    }
+
+    .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+    .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+    .wave-bar:nth-child(6) { animation-delay: 0.5s; }
+    .wave-bar:nth-child(7) { animation-delay: 0.6s; }
+
+    @keyframes wave {
+      0%, 100% { height: 20px; }
+      50% { height: 50px; }
+    }
+
+    .wave-text {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #a8ff78;
+      text-shadow: 0 0 6px #78ffd6;
+      animation: pulseText 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulseText {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ===== CONTAINER CARD ===== */
+    .container {
+      width: 100%;
+      max-width: 400px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 28px;
+      padding: 40px 28px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      z-index: 1;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.8s ease 1.2s forwards;
+      position: relative;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ===== HAMBURGER MENU (GARIS TIGA) DI KIRI ===== */
+    .menu-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .menu-btn:hover {
+      background: #e2e8f0;
+      transform: scale(1.05);
+    }
+
+    .menu-btn .line {
+      width: 20px;
+      height: 2.5px;
+      background: #0f172a;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    /* ===== SIDE MENU DARI KIRI ===== */
+    .side-menu {
+      position: absolute;
+      top: 68px;
+      left: 20px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 16px 20px;
+      min-width: 200px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      transform: translateY(-10px) scale(0.95);
+      visibility: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 20;
+    }
+
+    .side-menu.open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      visibility: visible;
+    }
+
+    .side-menu .menu-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .side-menu .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 8px;
+      border-radius: 10px;
+      color: #0f172a;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .side-menu .menu-item:hover {
+      background: #f1f5f9;
+    }
+
+    .side-menu .menu-item i {
+      width: 20px;
+      color: #6366f1;
+      font-size: 1rem;
+    }
+
+    /* Overlay */
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      display: none;
+    }
+
+    .menu-overlay.active {
+      display: block;
+    }
+
+    /* ===== AVATAR ===== */
+    .avatar-wrapper {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 20px;
+    }
+
+    .avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #e2e8f0;
+    }
+
+    .status-badge {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      width: 14px;
+      height: 14px;
+      background: #10b981;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+    }
+
+    .name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+      color: #0f172a;
+    }
+
+    .bio {
+      font-size: 0.9rem;
+      color: #64748b;
+      line-height: 1.4;
+      margin-bottom: 32px;
+    }
+
+    /* Links / Buttons */
+    .links-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .link-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      color: #0f172a;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .link-card i.left-icon {
+      font-size: 1.2rem;
+      width: 24px;
+      color: #6366f1;
+      transition: color 0.3s ease;
+    }
+
+    .link-card span {
+      flex: 1;
+      text-align: left;
+      margin-left: 14px;
+    }
+
+    .link-card i.arrow-icon {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .link-card:hover {
+      background: #e2e8f0;
+      border-color: #6366f1;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.15);
+    }
+
+    .link-card:hover i.left-icon {
+      color: #4f46e5;
+    }
+
+    .link-card:hover i.arrow-icon {
+      color: #0f172a;
+      transform: translateX(4px);
+    }
+
+    .link-card:active {
+      transform: translateY(-1px);
+    }
+
+    .link-card.antenna i.left-icon {
+      color: #34d399;
+    }
+
+    .link-card.antenna:hover i.left-icon {
+      color: #059669;
+    }
+
+    .link-card.antenna:hover {
+      border-color: #34d399;
+      box-shadow: 0 10px 20px -5px rgba(52, 211, 153, 0.2);
+    }
+
+    .link-card.tiktok i.left-icon {
+      color: #f472b6;
+    }
+
+    .link-card.tiktok:hover i.left-icon {
+      color: #db2777;
+    }
+
+    .link-card.tiktok:hover {
+      border-color: #f472b6;
+      box-shadow: 0 10px 20px -5px rgba(244, 114, 182, 0.2);
+    }
+
+    /* Social Buttons */
+    .social-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #64748b;
+      text-decoration: none;
+      font-size: 1.2rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .social-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .social-btn.whatsapp:hover {
+      background: #25D366;
+      border-color: #25D366;
+      color: #ffffff;
+      box-shadow: 0 8px 20px -5px rgba(37, 211, 102, 0.3);
+    }
+
+    .social-btn.telegram:hover {
+      background: #0088cc;
+      border-color: #0088cc;
+      color: #ffffff;
+      box-shadow: 0 8px 20px -5px rgba(0, 136, 204, 0.3);
+    }
+
+    .footer {
+      margin-top: 32px;
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+
+    @media (max-width: 480px) {
+      .side-menu {
+        min-width: 180px;
+        left: 16px;
+        top: 62px;
+      }
+      .menu-btn {
+        top: 16px;
+        left: 16px;
+        width: 36px;
+        height: 36px;
+      }
+      .menu-btn .line {
+        width: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOADING -->
+  <div class="loader-overlay" id="loaderOverlay">
+    <div class="wave-container">
+      <div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+    </div>
+    <div class="wave-text">Content is Loading</div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="container">
+
+    <!-- ===== HAMBURGER MENU DI KIRI ===== -->
+    <div class="menu-btn" id="menuBtn">
+      <span class="line"></span>
+      <span class="line"></span>
+      <span class="line"></span>
+    </div>
+
+    <!-- ===== SIDE MENU ===== -->
+    <div class="side-menu" id="sideMenu">
+      <div class="menu-title">✦ Menu</div>
+      
+      <% bio.menuItems.forEach(item => { %>
+        <a href="<%= item.url %>" class="menu-item">
+          <i class="<%= item.icon %>"></i>
+          <span><%= item.title %></span>
+        </a>
+      <% }) %>
+    </div>
+
+    <!-- OVERLAY -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <!-- AVATAR -->
+    <div class="avatar-wrapper">
+      <img src="<%= bio.logo %>" alt="Logo Always Rizz" class="avatar">
+      <span class="status-badge" title="Online"></span>
+    </div>
+
+    <h1 class="name"><%= bio.name %></h1>
+    <p class="bio"><%= bio.bio %></p>
+
+    <!-- Links -->
+    <div class="links-wrapper">
+      <% bio.links.forEach(link => { %>
+        <a href="<%= link.url %>" class="link-card <%= link.type %>" target="_blank">
+          <i class="<%= link.icon %> left-icon"></i>
+          <span><%= link.title %></span>
+          <i class="fa-solid fa-arrow-right arrow-icon"></i>
+        </a>
+      <% }) %>
+    </div>
+
+    <!-- Social -->
+    <div class="social-row">
+      <% bio.social.forEach(social => { %>
+        <a href="<%= social.url %>" class="social-btn <%= social.class %>" target="_blank" title="<%= social.name %>">
+          <i class="<%= social.icon %>"></i>
+        </a>
+      <% }) %>
+    </div>
+
+    <div class="footer">
+      <%= bio.footer %>
+    </div>
+  </div>
+
+  <script>
+    // Loading
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+        document.getElementById('loaderOverlay').classList.add('hidden');
+      }, 2000);
+    });
+
+    // Menu
+    const menuBtn = document.getElementById('menuBtn');
+    const sideMenu = document.getElementById('sideMenu');
+    const overlay = document.getElementById('menuOverlay');
+
+    function toggleMenu() {
+      sideMenu.classList.toggle('open');
+      overlay.classList.toggle('active');
+    }
+
+    menuBtn.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', toggleMenu);
+
+    document.addEventListener('click', function(e) {
+      if (!sideMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+        sideMenu.classList.remove('open');
+        overlay.classList.remove('active');
+      }
+    });
+  </script>
+
+</body>
+</html>
