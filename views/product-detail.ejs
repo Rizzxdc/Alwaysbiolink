@@ -69,6 +69,7 @@
       text-decoration: none;
       font-size: 1.2rem;
       transition: all 0.3s ease;
+      cursor: pointer;
     }
 
     .back-btn:hover {
@@ -279,9 +280,10 @@
 
   <div class="container">
 
-    <a href="/products" class="back-btn">
+    <!-- Back Button dengan history.back() -->
+    <button class="back-btn" onclick="history.back()">
       <i class="fa-solid fa-arrow-left"></i>
-    </a>
+    </button>
 
     <div class="detail-icon" id="detailIcon"><%= product.icon %></div>
     <div class="detail-name" id="detailName"><%= product.name %></div>
