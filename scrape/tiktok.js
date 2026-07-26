@@ -1,69 +1,63 @@
 const axios = require('axios');
+const { URLSearchParams } = require('url');
 
-/**
- * TikTok Scraper
- * Download video/audio dari TikTok tanpa watermark
- */
-
-async function tiktokDownload(url) {
+async function tiktokDl(url) {
     try {
-        const response = await axios.post('https://www.tikwm.com/api/',
-            new URLSearchParams({
-                url: url,
-                count: 12,
-                cursor: 0,
-                web: 1,
-                hd: 1
-            }),
-            {
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            }
+        const response = await axios.post('https://www.tikwm.com/api/', 
+            new URLSearchParams({ 
+                url: url, 
+                count: 12, 
+                cursor: 0, 
+                web: 1, 
+                hd: 1 
+            })
         );
-
         const data = response.data.data;
+        
+        if (!data) throw new Error("Video not found / Private");
 
-        if (!data) {
-            throw new Error("Video not found");
-        }
+        // --- FIX: PASTIKAN URL ABSOLUT ---
+        const domain = 'https://www.tikwm.com';
+        
+        let videoUrl = data.play;
+        let musicUrl = data.music;
+        let coverUrl = data.cover;
 
-        // Gunakan video URL tanpa watermark (wmplay) atau play
-        let videoUrl = data.wmplay || data.play || '';
+        // Jika url dimulai dengan '/', tambahkan domain
+        if (videoUrl && !videoUrl.startsWith('http')) videoUrl = domain + videoUrl;
+        if (musicUrl && !musicUrl.startsWith('http')) musicUrl = domain + musicUrl;
+        if (coverUrl && !coverUrl.startsWith('http')) coverUrl = domain + coverUrl;
 
-        // Jika videoUrl kosong, coba alternatif lain
-        if (!videoUrl && data.video) {
-            videoUrl = data.video;
+        // Handle Images (Slide)
+        let images = [];
+        if (data.images && Array.isArray(data.images)) {
+            images = data.images.map(img => !img.startsWith('http') ? domain + img : img);
         }
 
         return {
             status: true,
             result: {
                 author: data.author?.nickname || 'Unknown',
-                username: data.author?.unique_id || 'unknown',
-                caption: data.title || 'TikTok Video',
-                video: videoUrl,
-                cover: data.cover || '',
-                audio: data.music || '',
-                images: data.images || [],
+                unique_id: data.author?.unique_id || 'unknown',
+                title: data.title || 'TikTok Video',
+                video: videoUrl || '',
+                cover: coverUrl || '',
+                audio: musicUrl || '',
+                images: images || [],
                 duration: data.duration || 0,
                 play_count: data.play_count || 0,
                 like_count: data.digg_count || 0,
                 comment_count: data.comment_count || 0,
                 share_count: data.share_count || 0,
                 download_count: data.download_count || 0,
-                wmplay: data.wmplay || '',
-                hdplay: data.hdplay || ''
+                wmplay: data.wmplay ? (data.wmplay.startsWith('http') ? data.wmplay : domain + data.wmplay) : '',
+                hdplay: data.hdplay ? (data.hdplay.startsWith('http') ? data.hdplay : domain + data.hdplay) : ''
             }
         };
-
-    } catch (error) {
-        console.error("TikTok Error:", error.message);
-        throw new Error("Gagal mengambil data TikTok: " + error.message);
+    } catch (e) {
+        console.error("TikTok Error:", e.message);
+        throw new Error("Gagal mengambil data TikTok: " + e.message);
     }
 }
 
-// ✅ PASTIKAN EXPORT DENGAN CARA INI
-module.exports = { tiktokDownload };
+module.exports = { tiktokDl };
