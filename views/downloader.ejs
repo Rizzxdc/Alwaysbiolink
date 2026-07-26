@@ -1,0 +1,731 @@
+<!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Downloader — Always Rizz</title>  <link rel="icon" type="image/jpg" href="/logo.jpg">  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  <style>
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #ffffff;
+      color: #111827;
+      padding: 25px 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 570px;
+      background: #ffffff;
+      border: 1px solid #e8eaf0;
+      border-radius: 32px;
+      padding: 28px;
+      box-shadow:
+        0 20px 60px rgba(15, 23, 42, 0.07),
+        0 2px 8px rgba(15, 23, 42, 0.03);
+      animation: show .7s ease;
+    }
+
+    @keyframes show {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* TOP */
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .back-btn {
+      width: 45px;
+      height: 45px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      background: #f8fafc;
+      color: #111827;
+      cursor: pointer;
+      transition: .3s;
+      font-size: 15px;
+    }
+
+    .back-btn:hover {
+      background: #111827;
+      color: white;
+      transform: translateX(-3px);
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 13px;
+      border-radius: 50px;
+      background: #f0fdf4;
+      color: #16a34a;
+      border: 1px solid #dcfce7;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .6px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px rgba(34,197,94,.7);
+    }
+
+    /* HEADER */
+
+    .header {
+      margin-bottom: 25px;
+    }
+
+    .small-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: #6366f1;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .small-title i {
+      font-size: 11px;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      line-height: 1.2;
+      letter-spacing: -1.5px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .header h1 span {
+      background: linear-gradient(
+        90deg,
+        #6366f1,
+        #8b5cf6,
+        #a855f7
+      );
+
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header p {
+      color: #94a3b8;
+      font-size: 12px;
+      line-height: 1.7;
+      margin-top: 9px;
+      max-width: 430px;
+    }
+
+    /* SEARCH */
+
+    .search {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .search i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    .search input {
+      width: 100%;
+      height: 48px;
+      padding: 0 16px 0 43px;
+      border-radius: 15px;
+      border: 1px solid #e5e7eb;
+      outline: none;
+      background: #f8fafc;
+      color: #111827;
+      font-size: 11px;
+      transition: .3s;
+    }
+
+    .search input:focus {
+      background: #ffffff;
+      border-color: #8b5cf6;
+      box-shadow:
+        0 0 0 4px rgba(139,92,246,.08);
+    }
+
+    /* LIST */
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px;
+      border: 1px solid #eaecf0;
+      border-radius: 20px;
+      background: #ffffff;
+      color: #111827;
+      text-decoration: none;
+      overflow: hidden;
+      transition: .35s cubic-bezier(.2,.8,.2,1);
+    }
+
+    .item:hover {
+      transform: translateY(-4px);
+      border-color: #d9dbe3;
+      box-shadow:
+        0 15px 30px rgba(15,23,42,.08);
+    }
+
+    .item::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 15px;
+      bottom: 15px;
+      width: 3px;
+      border-radius: 10px;
+      background: var(--color);
+      opacity: 0;
+      transition: .3s;
+    }
+
+    .item:hover::before {
+      opacity: 1;
+    }
+
+    /* ICON */
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 15px;
+      color: white;
+      background: var(--color);
+      font-size: 19px;
+      box-shadow:
+        0 7px 18px rgba(15,23,42,.12);
+      transition: .35s;
+    }
+
+    .item:hover .icon {
+      transform: scale(1.08) rotate(-4deg);
+    }
+
+    /* INFO */
+
+    .info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .name {
+      font-size: 12px;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .desc {
+      color: #94a3b8;
+      font-size: 9px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* BADGE */
+
+    .badge {
+      padding: 6px 9px;
+      border-radius: 8px;
+      font-size: 7px;
+      font-weight: 800;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .active {
+      color: #16a34a;
+      background: #f0fdf4;
+      border: 1px solid #dcfce7;
+    }
+
+    .soon {
+      color: #d97706;
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
+    }
+
+    /* COLORS */
+
+    .instagram {
+      --color: linear-gradient(
+        135deg,
+        #833ab4,
+        #fd1d1d,
+        #fcb045
+      );
+    }
+
+    .tiktok {
+      --color: #111111;
+    }
+
+    .youtube {
+      --color: #ff0000;
+    }
+
+    .spotify {
+      --color: #1db954;
+    }
+
+    .facebook {
+      --color: #1877f2;
+    }
+
+    .twitter {
+      --color: #111111;
+    }
+
+    /* FOOTER */
+
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    .copyright {
+      color: #94a3b8;
+      font-size: 8px;
+      line-height: 1.8;
+    }
+
+    .copyright strong {
+      color: #6366f1;
+    }
+
+    .docs {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 12px;
+      border-radius: 11px;
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      color: #475569;
+      font-size: 8px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: .3s;
+    }
+
+    .docs:hover {
+      background: #111827;
+      border-color: #111827;
+      color: white;
+    }
+
+    /* MOBILE */
+
+    @media(max-width: 500px) {
+
+      body {
+        padding: 15px;
+        align-items: flex-start;
+        padding-top: 25px;
+      }
+
+      .container {
+        padding: 21px 16px;
+        border-radius: 25px;
+      }
+
+      .header h1 {
+        font-size: 27px;
+      }
+
+      .item {
+        padding: 12px;
+        gap: 12px;
+      }
+
+      .icon {
+        width: 43px;
+        height: 43px;
+        font-size: 17px;
+        border-radius: 13px;
+      }
+
+      .name {
+        font-size: 11px;
+      }
+
+      .desc {
+        font-size: 8px;
+      }
+
+      .badge {
+        font-size: 6px;
+        padding: 5px 7px;
+      }
+
+      .footer {
+        align-items: flex-start;
+      }
+
+    }
+
+  </style></head><body>  <div class="container"><div class="top">
+
+  <button
+    class="back-btn"
+    onclick="history.back()">
+
+    <i class="fa-solid fa-arrow-left"></i>
+
+  </button>
+
+  <div class="status">
+
+    <span class="status-dot"></span>
+
+    SYSTEM ONLINE
+
+  </div>
+
+</div>
+
+
+<div class="header">
+
+  <div class="small-title">
+
+    <i class="fa-solid fa-bolt"></i>
+
+    ALWAYS RIZZ TOOLS
+
+  </div>
+
+  <h1>
+
+    Media <span>Downloader.</span>
+
+  </h1>
+
+  <p>
+
+    Download media dari berbagai platform favorit
+    kamu dengan cepat, simpel, dan praktis.
+
+  </p>
+
+</div>
+
+
+<div class="search">
+
+  <i class="fa-solid fa-magnifying-glass"></i>
+
+  <input
+    type="text"
+    id="search"
+    placeholder="Cari platform downloader..."
+    autocomplete="off">
+
+</div>
+
+
+<div class="list" id="list">
+
+
+  <a
+    href="/downloader/instagram"
+    class="item"
+    data-name="instagram">
+
+    <div class="icon instagram">
+
+      <i class="fa-brands fa-instagram"></i>
+
+    </div>
+
+    <div class="info">
+
+      <div class="name">
+        Instagram Downloader
+      </div>
+
+      <div class="desc">
+        Stories, Reels & Posts Without Watermark
+      </div>
+
+    </div>
+
+    <span class="badge active">
+      Active
+    </span>
+
+  </a>
+
+
+  <a
+    href="/downloader/tiktok"
+    class="item"
+    data-name="tiktok">
+
+    <div class="icon tiktok">
+
+      <i class="fa-brands fa-tiktok"></i>
+
+    </div>
+
+    <div class="info">
+
+      <div class="name">
+        TikTok Downloader
+      </div>
+
+      <div class="desc">
+        Stories, Audio, Foto & Video Without Watermark
+      </div>
+
+    </div>
+
+    <span class="badge active">
+      Active
+    </span>
+
+  </a>
+
+
+  <a
+    href="/downloader/youtube"
+    class="item"
+    data-name="youtube">
+
+    <div class="icon youtube">
+
+      <i class="fa-brands fa-youtube"></i>
+
+    </div>
+
+    <div class="info">
+
+      <div class="name">
+        YouTube Downloader
+      </div>
+
+      <div class="desc">
+        Download Video MP4 & Audio MP3
+      </div>
+
+    </div>
+
+    <span class="badge active">
+      Active
+    </span>
+
+  </a>
+
+
+  <a
+    href="/downloader/spotify"
+    class="item"
+    data-name="spotify">
+
+    <div class="icon spotify">
+
+      <i class="fa-brands fa-spotify"></i>
+
+    </div>
+
+    <div class="info">
+
+      <div class="name">
+        Spotify Downloader
+      </div>
+
+      <div class="desc">
+        Download Music & Audio from Spotify
+      </div>
+
+    </div>
+
+    <span class="badge active">
+      Active
+    </span>
+
+  </a>
+
+
+  <a
+    href="#"
+    class="item"
+    data-name="facebook"
+    onclick="event.preventDefault(); alert('Facebook Downloader — Coming Soon!')">
+
+    <div class="icon facebook">
+
+      <i class="fa-brands fa-facebook-f"></i>
+
+    </div>
+
+    <div class="info">
+
+      <div class="name">
+        Facebook Downloader
+      </div>
+
+      <div class="desc">
+        Download Video from Facebook
+      </div>
+
+    </div>
+
+    <span class="badge soon">
+      Soon
+    </span>
+
+  </a>
+
+
+  <a
+    href="#"
+    class="item"
+    data-name="twitter x"
+    onclick="event.preventDefault(); alert('Twitter / X Downloader — Coming Soon!')">
+
+    <div class="icon twitter">
+
+      <i class="fa-brands fa-x-twitter"></i>
+
+    </div>
+
+    <div class="info">
+
+      <div class="name">
+        Twitter / X Downloader
+      </div>
+
+      <div class="desc">
+        Download Media from Twitter / X
+      </div>
+
+    </div>
+
+    <span class="badge soon">
+      Soon
+    </span>
+
+  </a>
+
+
+</div>
+
+
+<div class="footer">
+
+  <div class="copyright">
+
+    CREATED BY
+    <strong>Always Rizz</strong>
+
+    <br>
+
+    © 2026 • Always Riz Official
+
+  </div>
+
+  <a href="#" class="docs">
+
+    <i class="fa-solid fa-code"></i>
+
+    API Docs
+
+  </a>
+
+</div>
+
+  </div>  <script>
+
+    const search =
+      document.getElementById("search");
+
+    const items =
+      document.querySelectorAll(".item");
+
+
+    search.addEventListener("input", function () {
+
+      const keyword =
+        this.value.toLowerCase().trim();
+
+
+      items.forEach(item => {
+
+        const name =
+          item.dataset.name.toLowerCase();
+
+
+        if (name.includes(keyword)) {
+
+          item.style.display = "flex";
+
+        } else {
+
+          item.style.display = "none";
+
+        }
+
+      });
+
+    });
+
+  </script></body>
+</html>
