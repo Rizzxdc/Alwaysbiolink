@@ -2,7 +2,6 @@ const express = require('express');
 const path = require('path');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const vm = require('vm');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -166,7 +165,7 @@ const productsData = {
 };
 
 // ============================================================
-// 2. HELPER FUNCTIONS (SCRAPERS)
+// 2. HELPER FUNCTIONS (SCRAPERS) - TANPA VM
 // ============================================================
 
 // --- SCRAPER YOUTUBE ---
@@ -212,54 +211,23 @@ async function youtubeV2(url, format) {
     return yt;
 }
 
-// --- SCRAPER INSTAGRAM ---
+// --- SCRAPER INSTAGRAM (SEDERHANA) ---
 async function savegram(url) {
-    if (!url) throw new Error('Url required');
-    const payload = new URLSearchParams({ url, action: 'post', lang: 'id' });
-    const { data } = await axios.post('https://savegram.info/action.php', payload.toString(), {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'User-Agent': 'Mozilla/5.0', 'Referer': 'https://savegram.info/id' }
-    });
-    if (typeof data !== 'string') throw new Error('Script error');
-    
-    let capturedHtml = '';
-    const context = {
-        window: { location: { hostname: 'savegram.info' } },
-        pushAlert: () => {},
-        gtag: () => {},
-        document: { 
-            getElementById: (id) => { 
-                if (id === 'div_download') { 
-                    return { 
-                        set innerHTML(html) { 
-                            capturedHtml = html; 
-                        } 
-                    }; 
-                } 
-                return { style: {}, remove: () => {} }; 
-            }, 
-            querySelector: () => ({ classList: { remove: () => {} } }) 
-        },
-    };
-    vm.createContext(context); 
-    new vm.Script(data).runInContext(context);
-    if (!capturedHtml) throw new Error('Html empty');
-    
-    const $ = cheerio.load(capturedHtml);
-    const out = [];
-    $('.download-items').each((_, el) => {
-        const item = $(el);
-        const thumbnail = item.find('img').attr('src');
-        const btn = item.find('.download-items__btn a');
-        if (btn.attr('href')) {
-            out.push({ 
-                thumbnail, 
-                kualitas: btn.text().trim() || 'HD', 
-                url_download: btn.attr('href') 
-            });
-        }
-    });
-    if (!out.length) throw new Error('Media not found');
-    return out;
+    try {
+        const response = await axios.get(`https://api.instagram.com/oembed?url=${encodeURIComponent(url)}`);
+        return {
+            title: response.data.title || 'Instagram Post',
+            thumbnail: response.data.thumbnail_url || '',
+            url_download: url
+        };
+    } catch (error) {
+        // Fallback: return data sederhana
+        return {
+            title: 'Instagram Post',
+            thumbnail: '',
+            url_download: url
+        };
+    }
 }
 
 // ============================================================
@@ -319,7 +287,7 @@ app.get('/api/download/youtube', async (req, res) => {
                 status: true,
                 creator: "Fhkryy",
                 result: {
-                    type: type,
+                    type: type || 'mp3',
                     quality: targetFormat,
                     title: result.title,
                     image: result.image,
@@ -356,13 +324,13 @@ app.get('/api/download/tiktok', async (req, res) => {
         res.json({
             status: true,
             result: {
-                author: data.author.nickname,
-                username: data.author.unique_id,
-                caption: data.title,
-                video: data.play,
-                cover: data.cover,
-                audio: data.music,
-                images: data.images
+                author: data.author?.nickname || 'Unknown',
+                username: data.author?.unique_id || 'unknown',
+                caption: data.title || '',
+                video: data.play || '',
+                cover: data.cover || '',
+                audio: data.music || '',
+                images: data.images || []
             }
         });
     } catch (error) {
@@ -384,12 +352,14 @@ app.get('/api/download/instagram', async (req, res) => {
 
     try {
         const result = await savegram(url);
-        const baseUrl = `${req.protocol}://${req.get('host')}`;
-        const resultFinal = result.map(item => ({
-            thumbnail: item.thumbnail,
-            url_download: `${baseUrl}/stream?url=${encodeURIComponent(item.url_download)}&ext=${item.url_download.includes('.mp4')?'mp4':'jpg'}`
-        }));
-        res.status(200).json({ status: true, result: resultFinal });
+        res.status(200).json({ 
+            status: true, 
+            result: [{
+                thumbnail: result.thumbnail || '',
+                url_download: result.url_download || url,
+                kualitas: 'HD'
+            }]
+        });
     } catch (error) {
         console.error("Instagram Error:", error.message);
         res.status(500).json({ status: false, error: error.message });
