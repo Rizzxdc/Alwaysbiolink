@@ -1,43 +1,69 @@
 const axios = require('axios');
-const { URLSearchParams } = require('url');
 
-async function tiktokDl(url) {
+/**
+ * TikTok Scraper
+ * Download video/audio dari TikTok tanpa watermark
+ */
+
+async function tiktokDownload(url) {
     try {
-        const response = await axios.post('https://www.tikwm.com/api/', new URLSearchParams({ url: url, count: 12, cursor: 0, web: 1, hd: 1 }));
+        const response = await axios.post('https://www.tikwm.com/api/',
+            new URLSearchParams({
+                url: url,
+                count: 12,
+                cursor: 0,
+                web: 1,
+                hd: 1
+            }),
+            {
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }
+        );
+
         const data = response.data.data;
-        
-        if (!data) throw new Error("Video not found / Private");
 
-        // --- FIX: PASTIKAN URL ABSOLUT ---
-        const domain = 'https://www.tikwm.com';
-        
-        let videoUrl = data.play;
-        let musicUrl = data.music;
-        let coverUrl = data.cover;
+        if (!data) {
+            throw new Error("Video not found");
+        }
 
-        // Jika url dimulai dengan '/', tambahkan domain
-        if (videoUrl && !videoUrl.startsWith('http')) videoUrl = domain + videoUrl;
-        if (musicUrl && !musicUrl.startsWith('http')) musicUrl = domain + musicUrl;
-        if (coverUrl && !coverUrl.startsWith('http')) coverUrl = domain + coverUrl;
+        // Gunakan video URL tanpa watermark (wmplay) atau play
+        let videoUrl = data.wmplay || data.play || '';
 
-        // Handle Images (Slide)
-        let images = [];
-        if (data.images && Array.isArray(data.images)) {
-            images = data.images.map(img => !img.startsWith('http') ? domain + img : img);
+        // Jika videoUrl kosong, coba alternatif lain
+        if (!videoUrl && data.video) {
+            videoUrl = data.video;
         }
 
         return {
-            author: data.author.nickname,
-            unique_id: data.author.unique_id,
-            title: data.title,
-            video: videoUrl,
-            cover: coverUrl,
-            audio: musicUrl,
-            images: images
+            status: true,
+            result: {
+                author: data.author?.nickname || 'Unknown',
+                username: data.author?.unique_id || 'unknown',
+                caption: data.title || 'TikTok Video',
+                video: videoUrl,
+                cover: data.cover || '',
+                audio: data.music || '',
+                images: data.images || [],
+                duration: data.duration || 0,
+                play_count: data.play_count || 0,
+                like_count: data.digg_count || 0,
+                comment_count: data.comment_count || 0,
+                share_count: data.share_count || 0,
+                download_count: data.download_count || 0,
+                wmplay: data.wmplay || '',
+                hdplay: data.hdplay || ''
+            }
         };
-    } catch (e) {
-        throw new Error("Gagal mengambil data TikTok");
+
+    } catch (error) {
+        console.error("TikTok Error:", error.message);
+        throw new Error("Gagal mengambil data TikTok: " + error.message);
     }
 }
 
-module.exports = { tiktokDl };
+// ✅ PASTIKAN EXPORT DENGAN CARA INI
+module.exports = { tiktokDownload };
