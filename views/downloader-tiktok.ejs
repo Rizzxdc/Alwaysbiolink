@@ -174,15 +174,6 @@
       margin-right: 8px;
     }
 
-    .notification .notif-link {
-      color: #6366f1;
-      text-decoration: none;
-    }
-
-    .notification .notif-link:hover {
-      text-decoration: underline;
-    }
-
     /* ===== LOADING ===== */
     .loading {
       display: none;
@@ -231,29 +222,8 @@
       animation: slideDown 0.3s ease;
     }
 
-    /* ===== RESULT ===== */
-    .result-box {
-      display: none;
-      margin-top: 16px;
-      animation: fadeIn 0.5s ease;
-    }
-
-    .result-box.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .result-box .video-container {
+    /* ===== THUMBNAIL ===== */
+    .thumbnail-container {
       position: relative;
       border-radius: 12px;
       overflow: hidden;
@@ -261,14 +231,14 @@
       margin-bottom: 12px;
     }
 
-    .result-box .video-container video {
+    .thumbnail-container img {
       width: 100%;
       display: block;
-      max-height: 500px;
+      max-height: 400px;
       object-fit: cover;
     }
 
-    .result-box .video-container .play-btn {
+    .thumbnail-container .play-overlay {
       position: absolute;
       top: 50%;
       left: 50%;
@@ -282,21 +252,10 @@
       justify-content: center;
       font-size: 1.5rem;
       color: #ffffff;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: none;
+      pointer-events: none;
     }
 
-    .result-box .video-container .play-btn:hover {
-      background: #4f46e5;
-      transform: translate(-50%, -50%) scale(1.1);
-    }
-
-    .result-box .video-container .play-btn.hidden {
-      display: none;
-    }
-
-    .result-box .video-container .duration {
+    .thumbnail-container .duration {
       position: absolute;
       bottom: 10px;
       right: 10px;
@@ -308,29 +267,29 @@
     }
 
     /* ===== INFO VIDEO ===== */
-    .result-box .video-info {
+    .video-info {
       margin-bottom: 12px;
     }
 
-    .result-box .video-info .author {
+    .video-info .author {
       font-weight: 700;
       font-size: 0.95rem;
       color: #ffffff;
     }
 
-    .result-box .video-info .username {
+    .video-info .username {
       color: #666;
       font-size: 0.8rem;
     }
 
-    .result-box .video-info .caption {
+    .video-info .caption {
       color: #aaa;
       font-size: 0.85rem;
       margin-top: 2px;
       line-height: 1.4;
     }
 
-    .result-box .video-info .stats {
+    .video-info .stats {
       display: flex;
       gap: 16px;
       margin-top: 6px;
@@ -338,20 +297,20 @@
       color: #666;
     }
 
-    .result-box .video-info .stats span {
+    .video-info .stats span {
       display: flex;
       align-items: center;
       gap: 4px;
     }
 
     /* ===== BUTTON DOWNLOAD ===== */
-    .result-box .download-buttons {
+    .download-buttons {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
 
-    .result-box .download-btn {
+    .download-btn {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -368,31 +327,37 @@
       width: 100%;
     }
 
-    .result-box .download-btn:hover {
+    .download-btn:hover {
       transform: translateY(-2px);
     }
 
-    .result-box .download-btn.video {
+    .download-btn.video {
       background: #6366f1;
     }
 
-    .result-box .download-btn.video:hover {
+    .download-btn.video:hover {
       background: #4f46e5;
       box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
     }
 
-    .result-box .download-btn.audio {
+    .download-btn.audio {
       background: #2a2a2a;
       border: 1px solid #3a3a3a;
     }
 
-    .result-box .download-btn.audio:hover {
+    .download-btn.audio:hover {
       background: #3a3a3a;
       border-color: #6366f1;
     }
 
-    .result-box .download-btn i {
+    .download-btn i {
       font-size: 1.1rem;
+    }
+
+    .download-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
     }
 
     .footer {
@@ -416,8 +381,8 @@
         width: 100%;
         justify-content: center;
       }
-      .result-box .video-container video {
-        max-height: 350px;
+      .thumbnail-container img {
+        max-height: 300px;
       }
     }
   </style>
@@ -433,7 +398,7 @@
 
     <!-- Header -->
     <div class="header">
-      <div class="title">⬇️ TikTok Downloader</div>
+      <div class="title"># Tiktok Downloader</div>
       <div class="subtitle">Stories, Audio, Foto &amp; Video Without Watermark</div>
     </div>
 
@@ -447,7 +412,7 @@
 
     <!-- Notification -->
     <div class="notification" id="notification">
-      <span class="notif-icon">⏳</span>
+      <span class="notif-icon">⚠️</span>
       <span id="notifText">Mendownload 1 file ...</span>
       <br>
       <span style="font-size:0.7rem;color:#666;">
@@ -466,23 +431,21 @@
     <div class="error-msg" id="errorMsg"></div>
 
     <!-- Result -->
-    <div class="result-box" id="resultBox">
+    <div class="result-box" id="resultBox" style="display:none;">
 
-      <!-- Video Player -->
-      <div class="video-container">
-        <video id="videoPlayer" controls style="width:100%;display:none;">
-          <source id="videoSource" src="" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-        <button class="play-btn" id="playBtn">
+      <!-- Thumbnail -->
+      <div class="thumbnail-container">
+        <img id="thumbnailImg" src="" alt="Thumbnail">
+        <div class="play-overlay">
           <i class="fa-solid fa-play"></i>
-        </button>
+        </div>
         <div class="duration" id="duration">0:00</div>
       </div>
 
       <!-- Info -->
       <div class="video-info">
-        <div class="author" id="authorName">@username</div>
+        <div class="author" id="authorName">original videos</div>
+        <div class="username" id="usernameText">@username</div>
         <div class="caption" id="captionText">Caption video</div>
         <div class="stats" id="statsText">
           <span><i class="fa-regular fa-eye"></i> 0</span>
@@ -518,14 +481,13 @@
     const notification = document.getElementById('notification');
     const notifText = document.getElementById('notifText');
 
-    // Video elements
-    const videoPlayer = document.getElementById('videoPlayer');
-    const videoSource = document.getElementById('videoSource');
-    const playBtn = document.getElementById('playBtn');
+    // Thumbnail elements
+    const thumbnailImg = document.getElementById('thumbnailImg');
     const duration = document.getElementById('duration');
 
     // Info elements
     const authorName = document.getElementById('authorName');
+    const usernameText = document.getElementById('usernameText');
     const captionText = document.getElementById('captionText');
     const statsText = document.getElementById('statsText');
 
@@ -585,25 +547,20 @@
       // Reset
       hideError();
       hideNotification();
-      resultBox.classList.remove('active');
-      videoPlayer.style.display = 'none';
-      playBtn.classList.remove('hidden');
-      downloadAudio.style.display = 'none';
+      resultBox.style.display = 'none';
+      downloadVideo.href = '#';
+      downloadAudio.href = '#';
 
       // Show loading
       loading.classList.add('show');
       searchBtn.disabled = true;
 
       try {
-        console.log('📤 Fetching TikTok...', url);
-
         const response = await fetch(`/api/download/tiktok?apikey=${API_KEY}&url=${encodeURIComponent(url)}`);
         const data = await response.json();
 
         loading.classList.remove('show');
         searchBtn.disabled = false;
-
-        console.log('📥 Response:', data);
 
         if (!data.status) {
           throw new Error(data.error || 'Gagal mendapatkan data');
@@ -616,24 +573,22 @@
         // 1. Notifikasi
         showNotification('Mendownload 1 file ...');
 
-        // 2. Video Player
-        if (result.video) {
-          videoSource.src = result.video;
-          videoPlayer.load();
-          videoPlayer.style.display = 'block';
-          playBtn.classList.add('hidden');
-
-          // Set duration
-          if (result.duration) {
-            duration.textContent = formatDuration(result.duration);
-          }
+        // 2. Thumbnail
+        if (result.cover) {
+          thumbnailImg.src = result.cover;
         }
 
-        // 3. Info
-        authorName.textContent = `@${result.unique_id || 'username'}`;
+        // 3. Duration
+        if (result.duration) {
+          duration.textContent = formatDuration(result.duration);
+        }
+
+        // 4. Info
+        authorName.textContent = result.author || 'original videos';
+        usernameText.textContent = `@${result.unique_id || 'username'}`;
         captionText.textContent = result.title || 'TikTok Video';
 
-        // Stats
+        // 5. Stats
         let statsHtml = '';
         if (result.play_count) statsHtml += `<span><i class="fa-regular fa-eye"></i> ${formatNumber(result.play_count)}</span>`;
         if (result.like_count) statsHtml += `<span><i class="fa-regular fa-heart"></i> ${formatNumber(result.like_count)}</span>`;
@@ -641,10 +596,12 @@
         if (result.share_count) statsHtml += `<span><i class="fa-regular fa-share"></i> ${formatNumber(result.share_count)}</span>`;
         statsText.innerHTML = statsHtml || '<span>No stats</span>';
 
-        // 4. Download Buttons
+        // 6. Download Buttons - LANGSUNG DOWNLOAD
         if (result.video) {
           downloadVideo.href = result.video;
           downloadVideo.style.display = 'flex';
+          // Buka download otomatis
+          window.open(result.video, '_blank');
         } else {
           downloadVideo.style.display = 'none';
         }
@@ -656,10 +613,10 @@
           downloadAudio.style.display = 'none';
         }
 
-        // 5. Tampilkan result
-        resultBox.classList.add('active');
+        // 7. Tampilkan result
+        resultBox.style.display = 'block';
 
-        console.log('✅ Success!');
+        console.log('✅ Download started!');
 
       } catch (error) {
         console.error('❌ Error:', error.message);
@@ -668,12 +625,6 @@
         showError(error.message || 'Gagal memproses video');
       }
     }
-
-    // ===== PLAY BUTTON =====
-    playBtn.addEventListener('click', function() {
-      videoPlayer.play();
-      this.classList.add('hidden');
-    });
 
     // ===== EVENT LISTENERS =====
     searchBtn.addEventListener('click', handleSearch);
