@@ -21,24 +21,24 @@
 
     body {
       min-height: 100vh;
-      background: #f8fafc;
+      background: #0a0a0a;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
-      color: #0f172a;
+      color: #ffffff;
     }
 
     .container {
       width: 100%;
-      max-width: 450px;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 28px;
-      padding: 30px 24px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      max-width: 420px;
+      background: #1a1a1a;
+      border-radius: 20px;
+      padding: 24px 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      border: 1px solid #2a2a2a;
       position: relative;
-      animation: fadeInUp 0.6s ease forwards;
+      animation: fadeInUp 0.5s ease forwards;
     }
 
     @keyframes fadeInUp {
@@ -53,141 +53,141 @@
     }
 
     .back-btn {
-      position: absolute;
-      top: 16px;
-      left: 16px;
-      width: 38px;
-      height: 38px;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      background: #f1f5f9;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      color: #0f172a;
+      gap: 8px;
+      color: #888;
       text-decoration: none;
-      font-size: 1.1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 16px;
       transition: all 0.3s ease;
       cursor: pointer;
-      z-index: 10;
+      background: none;
+      border: none;
     }
 
     .back-btn:hover {
-      background: #e2e8f0;
-      transform: scale(1.05);
+      color: #ffffff;
+    }
+
+    .back-btn i {
+      font-size: 1rem;
     }
 
     .header {
-      text-align: center;
-      margin-bottom: 24px;
-      margin-top: 8px;
-    }
-
-    .header .icon {
-      width: 60px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #000000;
-      border-radius: 16px;
-      margin: 0 auto 10px;
-      font-size: 2rem;
-      color: #ffffff;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      margin-bottom: 16px;
     }
 
     .header .title {
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: #0f172a;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
     }
 
     .header .subtitle {
-      font-size: 0.85rem;
-      color: #94a3b8;
+      font-size: 0.75rem;
+      color: #666;
+      margin-top: 2px;
     }
 
+    /* ===== INPUT ===== */
     .input-group {
       display: flex;
       gap: 10px;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
 
     .input-group input {
       flex: 1;
-      padding: 14px 16px;
-      border: 2px solid #e2e8f0;
-      border-radius: 14px;
-      font-size: 0.9rem;
+      padding: 12px 16px;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      font-size: 0.85rem;
       outline: none;
       transition: all 0.3s ease;
-      background: #f8fafc;
+      background: #0a0a0a;
+      color: #ffffff;
     }
 
     .input-group input:focus {
-      border-color: #000000;
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+      border-color: #6366f1;
+      background: #111;
     }
 
     .input-group input::placeholder {
-      color: #94a3b8;
+      color: #555;
     }
 
-    .btn-download {
-      padding: 14px 24px;
-      background: #000000;
+    .btn-search {
+      padding: 12px 20px;
+      background: #6366f1;
       color: #ffffff;
       border: none;
-      border-radius: 14px;
+      border-radius: 12px;
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       cursor: pointer;
       transition: all 0.3s ease;
       white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
-    .btn-download:hover {
-      background: #1a1a1a;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    .btn-search:hover {
+      background: #4f46e5;
+      transform: scale(1.02);
     }
 
-    .btn-download:disabled {
-      opacity: 0.6;
+    .btn-search:disabled {
+      opacity: 0.5;
       cursor: not-allowed;
-      transform: none;
     }
 
-    .error-msg {
+    /* ===== NOTIFIKASI ===== */
+    .notification {
       display: none;
-      margin-top: 8px;
       padding: 10px 14px;
-      background: #fef2f2;
-      border: 1px solid #fca5a5;
+      background: #2a2a2a;
       border-radius: 10px;
-      color: #dc2626;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
+      color: #aaa;
+      margin-bottom: 16px;
+      border-left: 3px solid #f59e0b;
     }
 
-    .error-msg.show {
+    .notification.show {
       display: block;
+      animation: slideDown 0.3s ease;
     }
 
-    .error-msg .error-detail {
-      font-size: 0.75rem;
-      color: #991b1b;
-      margin-top: 4px;
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
+    .notification .notif-icon {
+      margin-right: 8px;
+    }
+
+    .notification .notif-link {
+      color: #6366f1;
+      text-decoration: none;
+    }
+
+    .notification .notif-link:hover {
+      text-decoration: underline;
+    }
+
+    /* ===== LOADING ===== */
     .loading {
       display: none;
       text-align: center;
-      padding: 20px;
+      padding: 30px 0;
     }
 
     .loading.show {
@@ -198,8 +198,8 @@
       display: inline-block;
       width: 30px;
       height: 30px;
-      border: 3px solid #e2e8f0;
-      border-top-color: #000000;
+      border: 3px solid #2a2a2a;
+      border-top-color: #6366f1;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
@@ -209,19 +209,33 @@
     }
 
     .loading p {
-      margin-top: 8px;
-      color: #64748b;
+      margin-top: 10px;
+      color: #666;
       font-size: 0.85rem;
     }
 
+    /* ===== ERROR ===== */
+    .error-msg {
+      display: none;
+      padding: 12px 14px;
+      background: #2a1a1a;
+      border: 1px solid #442222;
+      border-radius: 10px;
+      color: #ef4444;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+    }
+
+    .error-msg.show {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+
+    /* ===== RESULT ===== */
     .result-box {
       display: none;
       margin-top: 16px;
-      padding: 16px;
-      background: #f1f5f9;
-      border-radius: 14px;
-      border: 1px solid #e2e8f0;
-      animation: fadeIn 0.4s ease;
+      animation: fadeIn 0.5s ease;
     }
 
     .result-box.active {
@@ -239,139 +253,171 @@
       }
     }
 
-    .result-box .result-title {
-      font-weight: 700;
-      font-size: 1rem;
-      color: #0f172a;
-      margin-bottom: 4px;
+    .result-box .video-container {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0a0a0a;
+      margin-bottom: 12px;
     }
 
-    .result-box .result-detail {
-      font-size: 0.85rem;
-      color: #64748b;
-      margin-bottom: 8px;
+    .result-box .video-container video {
+      width: 100%;
+      display: block;
+      max-height: 500px;
+      object-fit: cover;
     }
 
-    .result-box .result-stats {
+    .result-box .video-container .play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 56px;
+      height: 56px;
+      background: rgba(99, 102, 241, 0.9);
+      border-radius: 50%;
       display: flex;
-      gap: 12px;
-      font-size: 0.7rem;
-      color: #94a3b8;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
+      align-items: center;
       justify-content: center;
+      font-size: 1.5rem;
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
     }
 
-    .result-box .result-stats span {
+    .result-box .video-container .play-btn:hover {
+      background: #4f46e5;
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    .result-box .video-container .play-btn.hidden {
+      display: none;
+    }
+
+    .result-box .video-container .duration {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 2px 10px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      color: #ffffff;
+    }
+
+    /* ===== INFO VIDEO ===== */
+    .result-box .video-info {
+      margin-bottom: 12px;
+    }
+
+    .result-box .video-info .author {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #ffffff;
+    }
+
+    .result-box .video-info .username {
+      color: #666;
+      font-size: 0.8rem;
+    }
+
+    .result-box .video-info .caption {
+      color: #aaa;
+      font-size: 0.85rem;
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    .result-box .video-info .stats {
+      display: flex;
+      gap: 16px;
+      margin-top: 6px;
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    .result-box .video-info .stats span {
       display: flex;
       align-items: center;
       gap: 4px;
     }
 
-    .result-box .result-thumbnail {
-      max-width: 100%;
-      max-height: 300px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      border: 1px solid #e2e8f0;
-      object-fit: cover;
-    }
-
+    /* ===== BUTTON DOWNLOAD ===== */
     .result-box .download-buttons {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 8px;
+    }
+
+    .result-box .download-btn {
+      display: flex;
+      align-items: center;
       justify-content: center;
-    }
-
-    .result-box .download-link {
-      display: inline-block;
-      padding: 10px 20px;
-      background: #22c55e;
-      color: #ffffff;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 600;
+      gap: 10px;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
       transition: all 0.3s ease;
-      font-size: 0.85rem;
+      text-decoration: none;
+      color: #ffffff;
+      width: 100%;
     }
 
-    .result-box .download-link:hover {
-      background: #16a34a;
+    .result-box .download-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
     }
 
-    .result-box .download-link.audio {
-      background: #8b5cf6;
+    .result-box .download-btn.video {
+      background: #6366f1;
     }
 
-    .result-box .download-link.audio:hover {
-      background: #7c3aed;
-      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    .result-box .download-btn.video:hover {
+      background: #4f46e5;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
     }
 
-    .result-box .download-link.watermark {
-      background: #f59e0b;
+    .result-box .download-btn.audio {
+      background: #2a2a2a;
+      border: 1px solid #3a3a3a;
     }
 
-    .result-box .download-link.watermark:hover {
-      background: #d97706;
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    .result-box .download-btn.audio:hover {
+      background: #3a3a3a;
+      border-color: #6366f1;
     }
 
-    .result-box .download-link.hd {
-      background: #ef4444;
-    }
-
-    .result-box .download-link.hd:hover {
-      background: #dc2626;
-      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    .result-box .download-btn i {
+      font-size: 1.1rem;
     }
 
     .footer {
       margin-top: 20px;
       text-align: center;
       font-size: 0.7rem;
-      color: #94a3b8;
-      padding-top: 16px;
-      border-top: 1px solid #f1f5f9;
+      color: #444;
+      padding-top: 14px;
+      border-top: 1px solid #2a2a2a;
     }
 
     @media (max-width: 480px) {
       .container {
-        padding: 20px 16px;
-        border-radius: 20px;
+        padding: 16px 14px;
+        border-radius: 16px;
       }
       .input-group {
         flex-direction: column;
       }
-      .btn-download {
+      .btn-search {
         width: 100%;
         justify-content: center;
       }
-      .header .icon {
-        width: 50px;
-        height: 50px;
-        font-size: 1.5rem;
-      }
-      .header .title {
-        font-size: 1rem;
-      }
-      .back-btn {
-        top: 12px;
-        left: 12px;
-        width: 34px;
-        height: 34px;
-        font-size: 1rem;
-      }
-      .result-box .download-link {
-        display: block;
-        width: 100%;
-        text-align: center;
-      }
-      .result-box .download-buttons {
-        flex-direction: column;
+      .result-box .video-container video {
+        max-height: 350px;
       }
     }
   </style>
@@ -380,39 +426,81 @@
 
   <div class="container">
 
+    <!-- Back Button -->
     <button class="back-btn" onclick="history.back()">
-      <i class="fa-solid fa-arrow-left"></i>
+      <i class="fa-solid fa-arrow-left"></i> Kembali
     </button>
 
+    <!-- Header -->
     <div class="header">
-      <div class="icon"><i class="fa-brands fa-tiktok"></i></div>
-      <div class="title">TikTok Downloader</div>
+      <div class="title">⬇️ TikTok Downloader</div>
       <div class="subtitle">Stories, Audio, Foto &amp; Video Without Watermark</div>
     </div>
 
+    <!-- Input -->
     <div class="input-group">
-      <input type="text" id="urlInput" placeholder="https://tiktok.com/@username/video/...">
-      <button class="btn-download" id="downloadBtn">
-        <i class="fa-solid fa-download"></i> Download
+      <input type="text" id="urlInput" placeholder="https://vt.tiktok.com/...">
+      <button class="btn-search" id="searchBtn">
+        <i class="fa-solid fa-magnifying-glass"></i> Search
       </button>
     </div>
 
-    <div class="error-msg" id="errorMsg">
-      <div id="errorText"></div>
-      <div class="error-detail" id="errorDetail"></div>
+    <!-- Notification -->
+    <div class="notification" id="notification">
+      <span class="notif-icon">⏳</span>
+      <span id="notifText">Mendownload 1 file ...</span>
+      <br>
+      <span style="font-size:0.7rem;color:#666;">
+        <i class="fa-regular fa-bell"></i> 
+        Lihat notifikasi untuk mengetahui status download
+      </span>
     </div>
 
+    <!-- Loading -->
     <div class="loading" id="loading">
       <div class="spinner"></div>
       <p>Sedang memproses...</p>
     </div>
 
+    <!-- Error -->
+    <div class="error-msg" id="errorMsg"></div>
+
+    <!-- Result -->
     <div class="result-box" id="resultBox">
-      <div class="result-title" id="resultTitle">✅ Siap Download</div>
-      <div class="result-detail" id="resultDetail">Klik tombol di bawah untuk download</div>
-      <div class="result-stats" id="resultStats"></div>
-      <img class="result-thumbnail" id="resultThumbnail" style="display:none;">
-      <div class="download-buttons" id="downloadButtons"></div>
+
+      <!-- Video Player -->
+      <div class="video-container">
+        <video id="videoPlayer" controls style="width:100%;display:none;">
+          <source id="videoSource" src="" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+        <button class="play-btn" id="playBtn">
+          <i class="fa-solid fa-play"></i>
+        </button>
+        <div class="duration" id="duration">0:00</div>
+      </div>
+
+      <!-- Info -->
+      <div class="video-info">
+        <div class="author" id="authorName">@username</div>
+        <div class="caption" id="captionText">Caption video</div>
+        <div class="stats" id="statsText">
+          <span><i class="fa-regular fa-eye"></i> 0</span>
+          <span><i class="fa-regular fa-heart"></i> 0</span>
+          <span><i class="fa-regular fa-comment"></i> 0</span>
+          <span><i class="fa-regular fa-share"></i> 0</span>
+        </div>
+      </div>
+
+      <!-- Download Buttons -->
+      <div class="download-buttons">
+        <a href="#" class="download-btn video" id="downloadVideo" target="_blank" download>
+          <i class="fa-solid fa-download"></i> DOWNLOAD VIDEO
+        </a>
+        <a href="#" class="download-btn audio" id="downloadAudio" target="_blank" download>
+          <i class="fa-solid fa-music"></i> DOWNLOAD AUDIO (MP3)
+        </a>
+      </div>
     </div>
 
     <div class="footer">
@@ -421,23 +509,33 @@
   </div>
 
   <script>
-    // ===== AMBIL ELEMEN =====
+    // ===== ELEMEN =====
     const urlInput = document.getElementById('urlInput');
-    const downloadBtn = document.getElementById('downloadBtn');
+    const searchBtn = document.getElementById('searchBtn');
     const resultBox = document.getElementById('resultBox');
-    const resultTitle = document.getElementById('resultTitle');
-    const resultDetail = document.getElementById('resultDetail');
-    const resultStats = document.getElementById('resultStats');
-    const resultThumbnail = document.getElementById('resultThumbnail');
-    const downloadButtons = document.getElementById('downloadButtons');
-    const errorMsg = document.getElementById('errorMsg');
-    const errorText = document.getElementById('errorText');
-    const errorDetail = document.getElementById('errorDetail');
     const loading = document.getElementById('loading');
+    const errorMsg = document.getElementById('errorMsg');
+    const notification = document.getElementById('notification');
+    const notifText = document.getElementById('notifText');
+
+    // Video elements
+    const videoPlayer = document.getElementById('videoPlayer');
+    const videoSource = document.getElementById('videoSource');
+    const playBtn = document.getElementById('playBtn');
+    const duration = document.getElementById('duration');
+
+    // Info elements
+    const authorName = document.getElementById('authorName');
+    const captionText = document.getElementById('captionText');
+    const statsText = document.getElementById('statsText');
+
+    // Download buttons
+    const downloadVideo = document.getElementById('downloadVideo');
+    const downloadAudio = document.getElementById('downloadAudio');
 
     const API_KEY = 'FreeByFhkry';
 
-    // ===== FUNGSI FORMAT ANGKA =====
+    // ===== FORMAT ANGKA =====
     function formatNumber(num) {
       if (!num) return '0';
       if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
@@ -445,73 +543,95 @@
       return num.toString();
     }
 
-    // ===== FUNGSI SHOW ERROR =====
-    function showError(msg, detail) {
-      errorText.textContent = '❌ ' + msg;
-      if (detail) {
-        errorDetail.textContent = 'Detail: ' + detail;
-      } else {
-        errorDetail.textContent = '';
-      }
+    // ===== FORMAT DURASI =====
+    function formatDuration(seconds) {
+      if (!seconds) return '0:00';
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // ===== SHOW ERROR =====
+    function showError(msg) {
+      errorMsg.textContent = '❌ ' + msg;
       errorMsg.classList.add('show');
     }
 
-    // ===== FUNGSI HIDE ERROR =====
+    // ===== HIDE ERROR =====
     function hideError() {
       errorMsg.classList.remove('show');
     }
 
-    // ===== FUNGSI DOWNLOAD =====
-    async function handleDownload() {
+    // ===== SHOW NOTIFICATION =====
+    function showNotification(msg) {
+      notifText.textContent = msg;
+      notification.classList.add('show');
+    }
+
+    // ===== HIDE NOTIFICATION =====
+    function hideNotification() {
+      notification.classList.remove('show');
+    }
+
+    // ===== MAIN SEARCH =====
+    async function handleSearch() {
       const url = urlInput.value.trim();
 
-      // Validasi URL
       if (!url) {
-        showError('Masukkan URL TikTok terlebih dahulu!', '');
+        showError('Masukkan URL TikTok terlebih dahulu!');
         return;
       }
 
-      // Reset state
+      // Reset
       hideError();
+      hideNotification();
       resultBox.classList.remove('active');
-      downloadButtons.innerHTML = '';
-      resultThumbnail.style.display = 'none';
-      resultStats.innerHTML = '';
+      videoPlayer.style.display = 'none';
+      playBtn.classList.remove('hidden');
+      downloadAudio.style.display = 'none';
 
-      // Tampilkan loading
-      downloadBtn.disabled = true;
+      // Show loading
       loading.classList.add('show');
+      searchBtn.disabled = true;
 
       try {
-        console.log('📤 Mengirim request ke API TikTok...');
-        console.log('URL:', url);
+        console.log('📤 Fetching TikTok...', url);
 
-        // Panggil API
         const response = await fetch(`/api/download/tiktok?apikey=${API_KEY}&url=${encodeURIComponent(url)}`);
         const data = await response.json();
 
-        console.log('📥 Response dari API:', data);
-
-        // Sembunyikan loading
         loading.classList.remove('show');
-        downloadBtn.disabled = false;
+        searchBtn.disabled = false;
 
-        // Cek status
+        console.log('📥 Response:', data);
+
         if (!data.status) {
-          throw new Error(data.error || 'Gagal mendapatkan link download');
+          throw new Error(data.error || 'Gagal mendapatkan data');
         }
 
-        // ===== TAMPILKAN HASIL =====
         const result = data.result;
 
-        // Title - Author
-        const authorName = result.author || result.unique_id || 'Unknown';
-        resultTitle.textContent = `🎵 ${authorName}`;
+        // ===== TAMPILKAN HASIL =====
 
-        // Detail - Username + Caption
-        const username = result.unique_id || 'user';
-        const caption = result.title || '';
-        resultDetail.textContent = `@${username} • ${caption.substring(0, 100)}${caption.length > 100 ? '...' : ''}`;
+        // 1. Notifikasi
+        showNotification('Mendownload 1 file ...');
+
+        // 2. Video Player
+        if (result.video) {
+          videoSource.src = result.video;
+          videoPlayer.load();
+          videoPlayer.style.display = 'block';
+          playBtn.classList.add('hidden');
+
+          // Set duration
+          if (result.duration) {
+            duration.textContent = formatDuration(result.duration);
+          }
+        }
+
+        // 3. Info
+        authorName.textContent = `@${result.unique_id || 'username'}`;
+        captionText.textContent = result.title || 'TikTok Video';
 
         // Stats
         let statsHtml = '';
@@ -519,80 +639,48 @@
         if (result.like_count) statsHtml += `<span><i class="fa-regular fa-heart"></i> ${formatNumber(result.like_count)}</span>`;
         if (result.comment_count) statsHtml += `<span><i class="fa-regular fa-comment"></i> ${formatNumber(result.comment_count)}</span>`;
         if (result.share_count) statsHtml += `<span><i class="fa-regular fa-share"></i> ${formatNumber(result.share_count)}</span>`;
-        resultStats.innerHTML = statsHtml;
+        statsText.innerHTML = statsHtml || '<span>No stats</span>';
 
-        // Thumbnail
-        if (result.cover) {
-          resultThumbnail.src = result.cover;
-          resultThumbnail.style.display = 'block';
-        }
-
-        // ===== TOMBOL DOWNLOAD =====
-        let buttonsHtml = '';
-
-        // Video tanpa watermark (prioritas)
+        // 4. Download Buttons
         if (result.video) {
-          buttonsHtml += `<a href="${result.video}" class="download-link" target="_blank" download>
-            <i class="fa-solid fa-download"></i> Download Video (No Watermark)
-          </a>`;
+          downloadVideo.href = result.video;
+          downloadVideo.style.display = 'flex';
+        } else {
+          downloadVideo.style.display = 'none';
         }
 
-        // HD Video
-        if (result.hdplay && result.hdplay !== result.video) {
-          buttonsHtml += `<a href="${result.hdplay}" class="download-link hd" target="_blank" download>
-            <i class="fa-solid fa-download"></i> Download HD
-          </a>`;
-        }
-
-        // Video dengan watermark
-        if (result.wmplay && result.wmplay !== result.video) {
-          buttonsHtml += `<a href="${result.wmplay}" class="download-link watermark" target="_blank" download>
-            <i class="fa-solid fa-download"></i> Download (With Watermark)
-          </a>`;
-        }
-
-        // Audio
         if (result.audio) {
-          buttonsHtml += `<a href="${result.audio}" class="download-link audio" target="_blank" download>
-            <i class="fa-solid fa-music"></i> Download Audio (MP3)
-          </a>`;
+          downloadAudio.href = result.audio;
+          downloadAudio.style.display = 'flex';
+        } else {
+          downloadAudio.style.display = 'none';
         }
 
-        // Images (slide)
-        if (result.images && result.images.length > 0) {
-          result.images.forEach((img, i) => {
-            buttonsHtml += `<a href="${img}" class="download-link" target="_blank" download>
-              <i class="fa-solid fa-image"></i> Download Image ${i + 1}
-            </a>`;
-          });
-        }
-
-        // Jika tidak ada tombol sama sekali
-        if (!buttonsHtml) {
-          buttonsHtml = `<div style="color:#64748b;font-size:0.85rem;padding:10px;">
-            <i class="fa-solid fa-triangle-exclamation"></i> Tidak ada link download yang tersedia
-          </div>`;
-        }
-
-        downloadButtons.innerHTML = buttonsHtml;
+        // 5. Tampilkan result
         resultBox.classList.add('active');
 
-        console.log('✅ Download berhasil!');
+        console.log('✅ Success!');
 
       } catch (error) {
         console.error('❌ Error:', error.message);
         loading.classList.remove('show');
-        downloadBtn.disabled = false;
-        showError('Gagal memproses video', error.message);
+        searchBtn.disabled = false;
+        showError(error.message || 'Gagal memproses video');
       }
     }
 
+    // ===== PLAY BUTTON =====
+    playBtn.addEventListener('click', function() {
+      videoPlayer.play();
+      this.classList.add('hidden');
+    });
+
     // ===== EVENT LISTENERS =====
-    downloadBtn.addEventListener('click', handleDownload);
+    searchBtn.addEventListener('click', handleSearch);
 
     urlInput.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
-        handleDownload();
+        handleSearch();
       }
     });
 
