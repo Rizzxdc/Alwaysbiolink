@@ -1,7 +1,11 @@
 const express = require('express');
 const path = require('path');
 const axios = require('axios');
-const cheerio = require('cheerio');
+
+// Import scraper dari folder scrape
+const { youtubeV2 } = require('./scrape/youtube');
+const { tiktokDownload } = require('./scrape/tiktok');
+const { instagramDownload } = require('./scrape/instagram');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -165,72 +169,6 @@ const productsData = {
 };
 
 // ============================================================
-// 2. HELPER FUNCTIONS (SCRAPERS)
-// ============================================================
-
-// --- SCRAPER YOUTUBE ---
-async function youtubeV2(url, format) {
-    const yt = { title: null, image: null, format, download: null };
-
-    const options = {
-        method: 'GET',
-        headers: {
-            'User-Agent': 'Mozilla/5.0 (Linux; Android 15; 23124RA7EO Build/AQ3A.240829.003) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.7444.174 Mobile Safari/537.36',
-            'Accept-Encoding': 'gzip, deflate, br, zstd',
-            'referer': 'https://ytmp3.so/',
-            'accept-language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7'
-        }
-    };
-
-    // STEP 1: INIT
-    let init = await fetch(
-        `https://p.savenow.to/ajax/download.php?copyright=0&format=${format}&url=${encodeURIComponent(url)}&api=dfcb6d76f2f6a9894gjkege8a4ab23222`,
-        options
-    ).then(r => r.json());
-
-    if (!init || !init.id) {
-        throw new Error("Gagal inisialisasi. Kualitas mungkin tidak tersedia.");
-    }
-
-    const id = init.id;
-    yt.title = init.info?.title || "YouTube Video";
-    yt.image = init.info?.image || "";
-
-    let prog = await fetch(`https://p.savenow.to/api/progress?id=${id}`, options).then(r => r.json());
-
-    let attempt = 0;
-    while (prog.success === 0) {
-        if (attempt > 30) break; 
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        prog = await fetch(`https://p.savenow.to/api/progress?id=${id}`, options).then(r => r.json());
-        if (prog.success === 1) break;
-        attempt++;
-    }
-
-    yt.download = prog.download_url || null;
-    return yt;
-}
-
-// --- SCRAPER INSTAGRAM (SEDERHANA) ---
-async function savegram(url) {
-    try {
-        const response = await axios.get(`https://api.instagram.com/oembed?url=${encodeURIComponent(url)}`);
-        return {
-            title: response.data.title || 'Instagram Post',
-            thumbnail: response.data.thumbnail_url || '',
-            url_download: url
-        };
-    } catch (error) {
-        // Fallback: return data sederhana
-        return {
-            title: 'Instagram Post',
-            thumbnail: '',
-            url_download: url
-        };
-    }
-}
-
-// ============================================================
 // 3. ROUTES
 // ============================================================
 
@@ -274,7 +212,7 @@ app.get('/downloader/spotify', (req, res) => {
 });
 
 // ============================================================
-// 4. API ENDPOINTS
+// 4. API ENDPOINTS (Menggunakan Scraper dari folder scrape)
 // ============================================================
 
 // --- API YOUTUBE ---
@@ -289,7 +227,7 @@ app.get('/api/download/youtube', async (req, res) => {
     }
 
     try {
-        let targetFormat = "mp3"; 
+        let targetFormat = "mp3";
         if (type === 'mp4') {
             if (!quality) {
                 return res.json({ status: false, error: "Quality parameter is required for MP4!" });
@@ -308,7 +246,7 @@ app.get('/api/download/youtube', async (req, res) => {
                     quality: targetFormat,
                     title: result.title,
                     image: result.image,
-                    download: result.download 
+                    download: result.download
                 }
             });
         } else {
@@ -320,10 +258,10 @@ app.get('/api/download/youtube', async (req, res) => {
     }
 });
 
-// --- API TIKTOK ---
+// --- API TIKTOK (Menggunakan scraper tiktok) ---
 app.get('/api/download/tiktok', async (req, res) => {
     const { apikey, url } = req.query;
-    
+
     if (apikey !== 'FreeByFhkry') {
         return res.json({ status: false, error: "Apikey invalid" });
     }
@@ -332,34 +270,21 @@ app.get('/api/download/tiktok', async (req, res) => {
     }
 
     try {
-        const response = await axios.post('https://www.tikwm.com/api/', 
-            new URLSearchParams({ url: url, count: 12, cursor: 0, web: 1, hd: 1 })
-        );
-        const data = response.data.data;
-        if (!data) throw new Error("Video not found");
-        
-        res.json({
-            status: true,
-            result: {
-                author: data.author?.nickname || 'Unknown',
-                username: data.author?.unique_id || 'unknown',
-                caption: data.title || '',
-                video: data.play || '',
-                cover: data.cover || '',
-                audio: data.music || '',
-                images: data.images || []
-            }
-        });
+        const result = await tiktokDownload(url);
+        res.json(result);
     } catch (error) {
-        console.error("TikTok Error:", error.message);
-        res.json({ status: false, error: "Gagal mengambil data TikTok" });
+        console.error("TikTok API Error:", error.message);
+        res.json({
+            status: false,
+            error: error.message || "Gagal mengambil data TikTok"
+        });
     }
 });
 
-// --- API INSTAGRAM ---
+// --- API INSTAGRAM (Menggunakan scraper instagram) ---
 app.get('/api/download/instagram', async (req, res) => {
     const { apikey, url } = req.query;
-    
+
     if (apikey !== 'FreeByFhkry') {
         return res.json({ status: false, error: "Apikey invalid" });
     }
@@ -368,17 +293,19 @@ app.get('/api/download/instagram', async (req, res) => {
     }
 
     try {
-        const result = await savegram(url);
-        res.status(200).json({ 
-            status: true, 
+        const result = await instagramDownload(url);
+        res.status(200).json({
+            status: true,
             result: [{
                 thumbnail: result.thumbnail || '',
                 url_download: result.url_download || url,
-                kualitas: 'HD'
+                kualitas: 'HD',
+                title: result.title || 'Instagram Post',
+                author: result.author || 'Unknown'
             }]
         });
     } catch (error) {
-        console.error("Instagram Error:", error.message);
+        console.error("Instagram API Error:", error.message);
         res.status(500).json({ status: false, error: error.message });
     }
 });
@@ -387,7 +314,7 @@ app.get('/api/download/instagram', async (req, res) => {
 app.get('/stream', async (req, res) => {
     const { url, ext } = req.query;
     if (!url) return res.status(400).send('Missing url');
-    
+
     try {
         const response = await axios({
             method: 'GET',
@@ -398,7 +325,7 @@ app.get('/stream', async (req, res) => {
                 'Referer': 'https://savegram.info/'
             }
         });
-        
+
         res.setHeader('Content-Disposition', `attachment; filename="download.${ext || 'mp4'}"`);
         res.setHeader('Content-Type', response.headers['content-type'] || 'application/octet-stream');
         response.data.pipe(res);
