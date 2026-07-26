@@ -2,9 +2,9 @@ const express = require('express');
 const path = require('path');
 const axios = require('axios');
 
-// ✅ Cara import yang benar - panggil dari folder scrape
+// Import scraper dari folder scrape
 const { youtubeV2 } = require('./scrape/youtube');
-const { tiktokDownload } = require('./scrape/tiktok');
+const { tiktokDl } = require('./scrape/tiktok'); // ← Ganti dengan tiktokDl
 const { instagramDownload } = require('./scrape/instagram');
 
 const app = express();
@@ -258,11 +258,11 @@ app.get('/api/download/youtube', async (req, res) => {
     }
 });
 
-// --- API TIKTOK ---
+// --- API TIKTOK (Menggunakan tiktokDl) ---
 app.get('/api/download/tiktok', async (req, res) => {
     const { apikey, url } = req.query;
 
-    console.log('TikTok Request:', { apikey, url }); // Debug
+    console.log('📤 TikTok Request:', { apikey, url });
 
     if (apikey !== 'FreeByFhkry') {
         return res.json({ status: false, error: "Apikey invalid" });
@@ -272,12 +272,11 @@ app.get('/api/download/tiktok', async (req, res) => {
     }
 
     try {
-        console.log('Calling tiktokDownload...'); // Debug
-        const result = await tiktokDownload(url);
-        console.log('TikTok Result:', result.status); // Debug
+        const result = await tiktokDl(url);
+        console.log('✅ TikTok Success:', result.status);
         res.json(result);
     } catch (error) {
-        console.error("TikTok API Error:", error.message);
+        console.error("❌ TikTok API Error:", error.message);
         res.json({
             status: false,
             error: error.message || "Gagal mengambil data TikTok"
