@@ -27,15 +27,15 @@ const bioData = {
   links: [
     {
       id: 'saluran-info',
-      title: 'Saluran Information Always Rizz',
-      url: 'https://whatsapp.com/channel/0029VbCo5zqB4hdWoU88fV0S',
+      title: 'Always Rizz ID | Information',
+      url: 'https://whatsapp.com/channel/0029Vb88ne4HrDZb9ar5M20G',
       icon: 'fa-solid fa-satellite',
       type: 'antenna'
     },
     {
       id: 'saluran-testimoni',
-      title: 'Saluran All Testimoni Always Rizz',
-      url: 'https://whatsapp.com/channel/0029Vb8BxGdD8SE1GiHCbu0g',
+      title: 'MiwaXcrasH Comunity',
+      url: 'https://whatsapp.com/channel/0029Vb8KSor7z4kXGZfVCf1E',
       icon: 'fa-solid fa-satellite',
       type: 'antenna'
     },
@@ -50,13 +50,13 @@ const bioData = {
   social: [
     {
       name: 'WhatsApp',
-      url: 'https://wa.me/6282113877157',
+      url: 'https://wa.me/628811753344',
       icon: 'fa-brands fa-whatsapp',
       class: 'whatsapp'
     },
     {
       name: 'Telegram',
-      url: 'https://t.me/AlwaysRizz',
+      url: 'https://t.me/Rizznotdevcuy',
       icon: 'fa-brands fa-telegram-plane',
       class: 'telegram'
     }
